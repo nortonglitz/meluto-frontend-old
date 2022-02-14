@@ -8,7 +8,6 @@ export const AccordionClean: React.FC<AccordionProps> = ({ children, sx, ...prop
       TransitionProps={{ unmountOnExit: true }}
       disableGutters
       sx={{
-        ...sx,
         minWidth: '300px',
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -22,7 +21,8 @@ export const AccordionClean: React.FC<AccordionProps> = ({ children, sx, ...prop
         },
         '&:first-of-type': {
           borderRadius: theme => theme.shape.borderRadius
-        }
+        },
+        ...sx
       }}>
         {children}
     </Accordion>

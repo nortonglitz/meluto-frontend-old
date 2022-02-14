@@ -9,3 +9,15 @@ export const showNumberMetricAffixes = (number: number) => {
     return numberText + 'M'
   }
 }
+
+export const formatCurrency = (value: number, minFractionDigits: number) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: minFractionDigits
+  }).format(value)
+}
+
+export const formatNumberUnits = (value: number) => {
+  return new Intl.NumberFormat('pt-BR', { useGrouping: true }).format(value)
+}

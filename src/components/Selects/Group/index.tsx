@@ -20,9 +20,11 @@ export const Option: React.FC<IOptions> = ({ selected, children, ...props }) => 
         }
       }}
     >
-      <Typography color={selected ? 'secondary' : 'text.secondary'} fontWeight="medium">
-        {children}
-      </Typography>
+      <Box sx={{
+        color: theme => selected ? theme.palette.secondary.main : theme.palette.text.secondary
+      }}>
+      {children}
+      </Box>
     </Button>
   )
 }
@@ -42,12 +44,9 @@ export const SelectGroup: React.FC<ISelectGroup> = ({ sx, icon, options, setChos
       display: 'flex',
       flexDirection: 'column'
     }}>
-      <Box sx={{ display: 'flex', alignItems: 'start', '& > svg': { mr: 0.5 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', '& > svg': { mr: 0.5 } }}>
         {icon}
-        <Typography sx={{
-          fontSize: '1rem',
-          letterSpacing: '0.05em'
-        }}>{label}</Typography>
+        <Typography variant="h6" fontWeight="regular">{label}</Typography>
       </Box>
       <ButtonGroup sx={{ mt: 1 }}>
         {options.map(option => (
@@ -56,7 +55,9 @@ export const SelectGroup: React.FC<ISelectGroup> = ({ sx, icon, options, setChos
             onClick={() => setChosen(option.value)}
             selected={chosen === option.value}
           >
-            {option.label}+
+            <Typography variant="h6">
+              {option.label}+
+            </Typography>
           </Option>
         ))}
       </ButtonGroup>

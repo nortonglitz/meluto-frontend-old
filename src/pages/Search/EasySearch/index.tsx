@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { showNumberMetricAffixes } from 'utils/handleNumber'
-import { Box, Typography, SxProps, Divider, AccordionSummary, AccordionDetails, Grid, Fade, Button, TextField, IconButton } from '@mui/material'
+import { useTheme, useMediaQuery, Box, Typography, SxProps, Divider, AccordionSummary, AccordionDetails, Grid, Fade, Button, TextField, IconButton } from '@mui/material'
 import { Bed, Shower, Car, ChevronDown, ArrowRight, Restore, City, HomeSearch } from 'mdi-material-ui'
 import { SelectIllustrationButton, SelectTextButton, AccordionClean, TextFieldPrice, SelectGroup, SelectTextMenu } from 'components'
 import CommercialIllustration from 'assets/illustrations/search-commercial.svg'
@@ -73,38 +73,36 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
     <AccordionClean sx={sx}>
       <AccordionSummary expandIcon={<ChevronDown/>}>
         <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
-          <Box sx={{ display: 'flex', alignItems: 'start' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Bed/>
             <Typography
               color="secondary"
+              variant="h6"
               sx={{
                 ml: 0.5,
-                fontWeight: 500,
-                fontSize: '1rem'
+                fontWeight: 500
               }}>
               {form.bedrooms + '+'}
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'start' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Shower/>
             <Typography
               color="secondary"
+              variant="h6"
               sx={{
-                ml: 0.5,
-                fontWeight: 500,
-                fontSize: '1rem'
+                ml: 0.5
               }}>
               {form.bathrooms + '+'}
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'start' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Car/>
             <Typography
               color="secondary"
+              variant="h6"
               sx={{
-                ml: 0.5,
-                fontWeight: 500,
-                fontSize: '1rem'
+                ml: 0.5
               }}>
               {form.parkingSpaces + '+'}
             </Typography>
@@ -115,7 +113,7 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
         <Divider flexItem sx={{ mb: 2 }}/>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <SelectGroup
-            icon={<Bed fontSize="small"/>}
+            icon={<Bed/>}
             label="Quartos"
             options={options}
             setChosen={value => setForm({ ...form, bedrooms: value as number })}
@@ -125,7 +123,7 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
         <Divider flexItem sx={{ my: 2 }}/>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <SelectGroup
-            icon={<Shower fontSize="small"/>}
+            icon={<Shower/>}
             label="Banheiros"
             options={options}
             setChosen={value => setForm({ ...form, bathrooms: value as number })}
@@ -135,7 +133,7 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
         <Divider flexItem sx={{ my: 2 }}/>
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
           <SelectGroup
-            icon={<Car fontSize="small"/>}
+            icon={<Car/>}
             label="Vagas"
             options={options}
             setChosen={value => setForm({ ...form, parkingSpaces: value as number })}
@@ -200,7 +198,7 @@ const PriceForm: React.FC<IPriceForm> = ({ sx, setForm, form }) => {
       <Box sx={{ flexGrow: 1 }}>
         <Typography align="center" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
           R$ {!form.min || form.min === 0 ? <Typography color="text.secondary" component="span" sx={{ ml: 0.5 }}>Mínimo</Typography> : showNumberMetricAffixes(form.min)}
-          <ArrowRight sx={{ fontSize: '1rem', mx: 1 }}/>
+          <ArrowRight sx={{ mx: 1 }} fontSize="small"/>
           R$ {!form.max || form.max === 1000000000 ? <Typography color="text.secondary" component="span" sx={{ ml: 0.5 }}>Máximo</Typography> : showNumberMetricAffixes(form.max)}
         </Typography>
       </Box>
@@ -252,14 +250,14 @@ const LocationForm: React.FC = () => {
         backgroundColor: theme => theme.palette.background.paper,
         p: 2
       }}>
-        <Typography sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }}>Onde está o seu futuro imóvel?</Typography>
+        <Typography variant="h4" align="center">Onde está o seu futuro imóvel?</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
           <TextField variant="standard" autoFocus fullWidth sx={{ my: 2 }}/>
           <IconButton type="submit" sx={{ height: 'fit-content' }}>
             <HomeSearch/>
           </IconButton>
         </Box>
-        <Typography sx={{ fontSize: { xs: '0.8rem', md: '1rem' } }} color="text.secondary" fontStyle="italic">
+        <Typography variant="body2" color="text.secondary" fontStyle="italic" align="center">
           Digite um endereço, cidade, bairro, rua ou CEP
         </Typography>
       </Box>
@@ -269,6 +267,9 @@ const LocationForm: React.FC = () => {
 
 const EasySearch: React.FC = () => {
   const [commercialForm, setCommercialForm] = useState<string[]>([])
+  const theme = useTheme()
+  const lgDown = useMediaQuery(theme.breakpoints.down('lg'))
+  const smDown = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [resForm, setResForm] = useState({
     bathrooms: 0,
@@ -287,25 +288,34 @@ const EasySearch: React.FC = () => {
     min: null!,
     max: null!
   })
+
+  useEffect(() => {
+    document.title = 'Meluto'
+  }, [])
+
   return (
     <Fade in>
       <Box>
         <Box sx={{
           position: 'absolute',
+          zIndex: -1000,
+          height: 'calc(100% - 64px)',
+          width: '100%',
           backgroundImage: `url(${SearchBackgroundImage})`,
-          width: '100vw',
-          minHeight: '90vh',
           backgroundPosition: 'center',
           backgroundSize: 'cover',
-          borderBottomLeftRadius: { sx: '0px', sm: '100%' },
-          zIndex: -1000
+          borderBottomLeftRadius: smDown ? '0%' : '100%'
         }}/>
-        <Box sx={{ pt: { xs: 4, lg: 10 }, px: 4, height: '90vh' }}>
+        <Box sx={{
+          pt: { xs: 4, lg: 10 },
+          px: 4
+        }}>
           <Typography
+            align="center"
+            fontWeight="medium"
+            variant={lgDown ? 'h5' : 'h4'}
             sx={{
-              fontSize: { xs: '1.1rem', sm: '2rem', md: '2.2rem' },
-              fontWeight: 700,
-              ml: { xs: '0%', lg: '15%' },
+              ml: { xs: '0%', md: '15%' },
               width: 'fit-content',
               backgroundColor: theme => theme.palette.background.default + '30',
               borderRadius: theme => theme.shape.borderRadius,
@@ -318,10 +328,10 @@ const EasySearch: React.FC = () => {
           </Typography>
           <Box sx={{ display: 'flex' }}>
             <Grid container>
-             <Grid item xs={12} sx={{ display: { xs: 'block', lg: 'none' }, my: 2 }}>
+              <Grid item xs={12} sx={{ display: { xs: 'block', lg: 'none' }, my: 2 }}>
                 <LocationForm/>
               </Grid>
-              <Grid item xs={12} lg={4}>
+              <Grid item xs={12} lg={4} xl={4}>
                 <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                   <Box sx={{
                     display: 'flex',

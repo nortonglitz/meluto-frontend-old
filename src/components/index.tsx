@@ -22,3 +22,4 @@ export { TextFieldPrice } from './TextFields/Price'
 
 /* Cards */
 export { CardProperty } from './Cards/Property'
+export { CardAdvertiser } from './Cards/Advertiser'
