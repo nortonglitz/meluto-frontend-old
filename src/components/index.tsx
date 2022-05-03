@@ -19,6 +19,7 @@ export { AccordionClean } from './Accordions/Clean'
 
 /* TextFields */
 export { TextFieldPrice } from './TextFields/Price'
+export { TextFieldPassword } from './TextFields/Password'
 
 /* Cards */
 export { CardProperty } from './Cards/Property'

@@ -55,5 +55,3 @@ export const TopBar: React.FC = () => {
     </>
   )
 }
-
-export default TopBar

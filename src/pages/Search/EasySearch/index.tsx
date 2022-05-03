@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react'
 import { showNumberMetricAffixes } from 'utils/handleNumber'
 import { useTheme, useMediaQuery, Box, Typography, SxProps, Divider, AccordionSummary, AccordionDetails, Grid, Fade, Button, TextField, IconButton } from '@mui/material'
 import { Bed, Shower, Car, ChevronDown, ArrowRight, Restore, City, HomeSearch } from 'mdi-material-ui'
@@ -7,15 +7,37 @@ import CommercialIllustration from 'assets/illustrations/search-commercial.svg'
 import ResidentialIllustration from 'assets/illustrations/search-residential.svg'
 import SearchBackgroundImage from 'assets/imgs/easysearch-background.jpg'
 
-interface ISearchBox {
-  sx?: SxProps,
-  form: {property: 'residential' | 'commercial', transaction: 'buy' | 'rent'}
-  setForm: ({ property, transaction } : {property: 'residential' | 'commercial', transaction: 'buy' | 'rent'}) => void
+type Property = 'residential' | 'commercial'
+type Transaction = 'buy' | 'rent'
+type NumberRange = {
+  min: number | undefined
+  max: number | undefined
 }
-const SearchBox: React.FC<ISearchBox> = ({ sx, form, setForm }) => {
-  const handleClick = (type: 'transaction' | 'property', value: string) => {
-    setForm({ ...form, [type]: value })
+
+interface EasySearchForm {
+  property: Property
+  transaction: Transaction
+  residential: {
+    bathrooms: number
+    bedrooms: number
+    parkingSpaces: number
   }
+  commercial: {
+    type: string[]
+  }
+  price: {
+    rent: NumberRange
+    buy: NumberRange
+  }
+}
+
+interface Form {
+  setForm: Dispatch<SetStateAction<EasySearchForm>>
+  form: EasySearchForm
+  sx?: SxProps
+}
+
+const SearchBox: React.FC<Form> = ({ form, setForm, sx }) => {
   return (
       <Box sx={{ display: 'flex', flexDirection: 'column', ...sx }}>
         <Box sx={{ display: 'flex' }}>
@@ -23,7 +45,7 @@ const SearchBox: React.FC<ISearchBox> = ({ sx, form, setForm }) => {
             sx={{ mr: 1, p: 1 }}
             label="Residencial"
             selected={form.property === 'residential'}
-            onClick={() => handleClick('property', 'residential')}
+            onClick={() => setForm({ ...form, property: 'residential' })}
           >
             <img src={ResidentialIllustration} width={100} alt="Residencial" />
           </SelectIllustrationButton>
@@ -31,7 +53,7 @@ const SearchBox: React.FC<ISearchBox> = ({ sx, form, setForm }) => {
             sx={{ ml: 1, p: 1 }}
             label="Comercial"
             selected={form.property === 'commercial'}
-            onClick={() => handleClick('property', 'commercial')}
+            onClick={() => setForm({ ...form, property: 'commercial' })}
           >
             <img src={CommercialIllustration} width={100} alt="Comercial"/>
           </SelectIllustrationButton>
@@ -39,13 +61,13 @@ const SearchBox: React.FC<ISearchBox> = ({ sx, form, setForm }) => {
         <Box sx={{ display: 'flex', mt: 2 }}>
           <SelectTextButton sx={{ width: '50%', mr: 1 }}
             selected={form.transaction === 'buy'}
-            onClick={() => handleClick('transaction', 'buy')}
+            onClick={() => setForm({ ...form, transaction: 'buy' })}
           >
             Comprar
           </SelectTextButton>
           <SelectTextButton sx={{ width: '50%', ml: 1 }}
             selected={form.transaction === 'rent'}
-            onClick={() => handleClick('transaction', 'rent')}
+            onClick={() => setForm({ ...form, transaction: 'rent' })}
           >
             Alugar
           </SelectTextButton>
@@ -54,13 +76,7 @@ const SearchBox: React.FC<ISearchBox> = ({ sx, form, setForm }) => {
   )
 }
 
-interface IResidentialForm {
-  sx?: SxProps,
-  form: { bedrooms: number, bathrooms: number, parkingSpaces: number }
-  setForm: ({ bedrooms, bathrooms, parkingSpaces }: {bedrooms: number, bathrooms: number, parkingSpaces: number}) => void
-}
-
-const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
+const ResidentialForm: React.FC<Form> = ({ sx, setForm, form }) => {
   const options = [
     { value: 0, label: '0' },
     { value: 1, label: '1' },
@@ -82,7 +98,7 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
                 ml: 0.5,
                 fontWeight: 500
               }}>
-              {form.bedrooms + '+'}
+              {form.residential.bedrooms + '+'}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -93,7 +109,7 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
               sx={{
                 ml: 0.5
               }}>
-              {form.bathrooms + '+'}
+              {form.residential.bathrooms + '+'}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -104,7 +120,7 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
               sx={{
                 ml: 0.5
               }}>
-              {form.parkingSpaces + '+'}
+              {form.residential.parkingSpaces + '+'}
             </Typography>
           </Box>
         </Box>
@@ -116,8 +132,8 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
             icon={<Bed/>}
             label="Quartos"
             options={options}
-            setChosen={value => setForm({ ...form, bedrooms: value as number })}
-            chosen={form.bedrooms}
+            setChosen={value => setForm({ ...form, residential: { ...form.residential, bedrooms: value as number } })}
+            chosen={form.residential.bedrooms}
           />
         </Box>
         <Divider flexItem sx={{ my: 2 }}/>
@@ -126,8 +142,8 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
             icon={<Shower/>}
             label="Banheiros"
             options={options}
-            setChosen={value => setForm({ ...form, bathrooms: value as number })}
-            chosen={form.bathrooms}
+            setChosen={value => setForm({ ...form, residential: { ...form.residential, bathrooms: value as number } })}
+            chosen={form.residential.bathrooms}
           />
         </Box>
         <Divider flexItem sx={{ my: 2 }}/>
@@ -136,8 +152,8 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
             icon={<Car/>}
             label="Vagas"
             options={options}
-            setChosen={value => setForm({ ...form, parkingSpaces: value as number })}
-            chosen={form.parkingSpaces}
+            setChosen={value => setForm({ ...form, residential: { ...form.residential, parkingSpaces: value as number } })}
+            chosen={form.residential.parkingSpaces}
           />
         </Box>
       </AccordionDetails>
@@ -145,20 +161,14 @@ const ResidentialForm: React.FC<IResidentialForm> = ({ sx, setForm, form }) => {
   )
 }
 
-interface ICommercialForm {
-  sx?: SxProps
-  setForm: (value: string[]) => void
-  form: string[]
-}
-
-const CommercialForm: React.FC<ICommercialForm> = ({ sx, setForm, form }) => {
+const CommercialForm: React.FC<Form> = ({ sx, setForm, form }) => {
   const options = ['Loja/Salão', 'Grande Empreendimento', 'Sala Comercial', 'Casa Comercial', 'Edifício', 'Laje Corporativa/Andar', 'Terreno/Terra', 'Depósito/Galpão']
   return (
     <AccordionClean sx={{ ...sx }}>
       <AccordionSummary expandIcon={<ChevronDown/>}>
         <City/>
-        <Typography align="center" color={form.length > 0 ? 'text.primary' : 'text.secondary'} sx={{ flexGrow: 1 }}>
-          {form.length > 1 ? `${form[0]} +${form.length - 1}` : form.length === 1 ? form : 'Todos'}
+        <Typography align="center" color={form.commercial.type.length > 0 ? 'text.primary' : 'text.secondary'} sx={{ flexGrow: 1 }}>
+          {form.commercial.type.length > 1 ? `${form.commercial.type[0]} +${form.commercial.type.length - 1}` : form.commercial.type.length === 1 ? form.commercial.type[0] : 'Todos'}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
@@ -168,8 +178,8 @@ const CommercialForm: React.FC<ICommercialForm> = ({ sx, setForm, form }) => {
             label="Tipos"
             multiple
             options={options}
-            value={form}
-            onChoose={(chosen) => setForm(chosen as string[])}
+            value={form.commercial.type}
+            onChoose={(chosen) => setForm({ ...form, commercial: { type: chosen as string[] } })}
           />
         </Box>
       </AccordionDetails>
@@ -177,19 +187,16 @@ const CommercialForm: React.FC<ICommercialForm> = ({ sx, setForm, form }) => {
   )
 }
 
-interface IPriceForm {
-  sx?: SxProps,
-  form: { max: number, min: number }
-  setForm: ({ max, min }: { max: number, min: number}) => void
-}
-
-const PriceForm: React.FC<IPriceForm> = ({ sx, setForm, form }) => {
+const PriceForm: React.FC<Form> = ({ sx, setForm, form }) => {
+  const min = form.price[form.transaction].min
+  const max = form.price[form.transaction].max
   const checkValues = () => {
-    if (form.max < form.min && form.max && form.min) {
-      setForm({
-        max: form.min,
-        min: form.max
-      })
+    if (!min || !max) {
+      return
+    }
+
+    if (max < min) {
+      setForm({ ...form, price: { ...form.price, [form.transaction]: { max: min, min: max } } })
     }
   }
   return (
@@ -197,9 +204,9 @@ const PriceForm: React.FC<IPriceForm> = ({ sx, setForm, form }) => {
     <AccordionSummary expandIcon={<ChevronDown/>}>
       <Box sx={{ flexGrow: 1 }}>
         <Typography align="center" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
-          R$ {!form.min || form.min === 0 ? <Typography color="text.secondary" component="span" sx={{ ml: 0.5 }}>Mínimo</Typography> : showNumberMetricAffixes(form.min)}
+          R$ {!min || min === 0 ? <Typography color="text.secondary" component="span" sx={{ ml: 0.5 }}>Mínimo</Typography> : showNumberMetricAffixes(min)}
           <ArrowRight sx={{ mx: 1 }} fontSize="small"/>
-          R$ {!form.max || form.max === 1000000000 ? <Typography color="text.secondary" component="span" sx={{ ml: 0.5 }}>Máximo</Typography> : showNumberMetricAffixes(form.max)}
+          R$ {!max || max === 1000000000 ? <Typography color="text.secondary" component="span" sx={{ ml: 0.5 }}>Máximo</Typography> : showNumberMetricAffixes(max)}
         </Typography>
       </Box>
     </AccordionSummary>
@@ -208,8 +215,17 @@ const PriceForm: React.FC<IPriceForm> = ({ sx, setForm, form }) => {
       <TextFieldPrice
         label="Mínimo"
         variant="outlined"
-        value={form.min ? form.min : ''}
-        onValueChange={({ floatValue }) => setForm({ ...form, min: floatValue as number })}
+        value={min || ''}
+        onValueChange={({ floatValue }) => setForm({
+          ...form,
+          price: {
+            ...form.price,
+            [form.transaction]: {
+              min: floatValue as number,
+              max: form.price[form.transaction].max
+            }
+          }
+        })}
         fullWidth
         onBlur={() => checkValues()}
       />
@@ -217,8 +233,17 @@ const PriceForm: React.FC<IPriceForm> = ({ sx, setForm, form }) => {
         sx={{ mt: 2 }}
         label="Máximo"
         variant="outlined"
-        value={form.max ? form.max : ''}
-        onValueChange={({ floatValue }) => setForm({ ...form, max: floatValue as number })}
+        value={max || ''}
+        onValueChange={({ floatValue }) => setForm({
+          ...form,
+          price: {
+            ...form.price,
+            [form.transaction]: {
+              min: form.price[form.transaction].min,
+              max: floatValue as number
+            }
+          }
+        })}
         fullWidth
         onBlur={() => checkValues()}
       />
@@ -227,7 +252,16 @@ const PriceForm: React.FC<IPriceForm> = ({ sx, setForm, form }) => {
           variant="outlined"
           endIcon={<Restore/>}
           size="small"
-          onClick={() => setForm({ max: null!, min: null! })}
+          onClick={() => setForm({
+            ...form,
+            price: {
+              ...form.price,
+              [form.transaction]: {
+                min: undefined,
+                max: undefined
+              }
+            }
+          })}
         >
           Redefinir
         </Button>
@@ -252,7 +286,12 @@ const LocationForm: React.FC = () => {
       }}>
         <Typography variant="h4" align="center">Onde está o seu futuro imóvel?</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
-          <TextField variant="standard" autoFocus fullWidth sx={{ my: 2 }}/>
+          <TextField variant="standard" autoFocus fullWidth sx={{
+            my: 2,
+            '& input': {
+              fontSize: theme => theme.typography.h5.fontSize
+            }
+          }}/>
           <IconButton type="submit" sx={{ height: 'fit-content' }}>
             <HomeSearch/>
           </IconButton>
@@ -265,28 +304,31 @@ const LocationForm: React.FC = () => {
   )
 }
 
-const EasySearch: React.FC = () => {
-  const [commercialForm, setCommercialForm] = useState<string[]>([])
+export const EasySearch: React.FC = () => {
   const theme = useTheme()
   const lgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const smDown = useMediaQuery(theme.breakpoints.down('sm'))
-
-  const [resForm, setResForm] = useState({
-    bathrooms: 0,
-    bedrooms: 0,
-    parkingSpaces: 0
-  })
-
-  const [searchForm, setSearchForm] = useState<{
-    property: 'residential' | 'commercial', transaction: 'buy' | 'rent'
-  }>({
+  const [form, setForm] = useState<EasySearchForm>({
     property: 'residential',
-    transaction: 'buy'
-  })
-
-  const [priceForm, setPriceForm] = useState<{max: number, min: number}>({
-    min: null!,
-    max: null!
+    transaction: 'buy',
+    residential: {
+      bathrooms: 0,
+      bedrooms: 0,
+      parkingSpaces: 0
+    },
+    commercial: {
+      type: []
+    },
+    price: {
+      buy: {
+        min: undefined,
+        max: undefined
+      },
+      rent: {
+        min: undefined,
+        max: undefined
+      }
+    }
   })
 
   useEffect(() => {
@@ -345,13 +387,13 @@ const EasySearch: React.FC = () => {
                     backgroundColor: theme => theme.palette.background.paper,
                     p: 2
                   }}>
-                    <SearchBox form={searchForm} setForm={setSearchForm} sx={{ mb: 2 }}/>
-                    <PriceForm form={priceForm} setForm={setPriceForm} sx={{ mb: 2 }}/>
-                    {searchForm.property === 'residential' &&
-                      <ResidentialForm form={resForm} setForm={setResForm}/>
+                    <SearchBox form={form} setForm={setForm} sx={{ mb: 2 }}/>
+                    <PriceForm form={form} setForm={setForm} sx={{ mb: 2 }}/>
+                    {form.property === 'residential' &&
+                      <ResidentialForm form={form} setForm={setForm}/>
                     }
-                    {searchForm.property === 'commercial' &&
-                      <CommercialForm form={commercialForm} setForm={setCommercialForm}/>
+                    {form.property === 'commercial' &&
+                      <CommercialForm form={form} setForm={setForm}/>
                     }
                   </Box>
                 </Box>
@@ -366,5 +408,3 @@ const EasySearch: React.FC = () => {
     </Fade>
   )
 }
-
-export default EasySearch

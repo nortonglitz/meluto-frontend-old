@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { formatCurrency, formatNumberUnits } from 'utils/handleNumber'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import SwiperCore, { Navigation, Lazy } from 'swiper'
-import { Card, Fade, CardMedia, CardActionArea, Box, Typography, BoxProps, Button, IconButton, IconButtonProps, ButtonProps } from '@mui/material'
+import { Card, Fade, CardMedia, CardActionArea, Box, Typography, BoxProps, Button, IconButton, IconButtonProps, ButtonProps, CardProps } from '@mui/material'
 import { MapMarkerRadius, HeartOutline, Share, Delete, DeleteEmpty, Check, Close, Eye, Shower, Car, Heart, RulerSquare, Bed, Cellphone } from 'mdi-material-ui'
 import Img1 from 'assets/imgs/residential/1.jpg'
 import Img2 from 'assets/imgs/residential/2.jpg'
@@ -353,7 +353,7 @@ export const IconDesc: React.FC<IIconDesc> = ({ type, desc, sx, ...props }) => {
   )
 }
 
-interface ICardProperty {
+interface ICardProperty extends CardProps {
   stats?: {
     active: boolean
     phoneViews: number
@@ -362,17 +362,27 @@ interface ICardProperty {
   }
 }
 
-export const CardProperty: React.FC<ICardProperty> = ({ stats }) => {
+export const CardProperty: React.FC<ICardProperty> = ({ stats, sx, ...props }) => {
   const [openModal, setOpenModal] = useState(false)
 
   return (
     <Card
+      {...props}
       sx={{
         borderRadius: { xs: '0px', sm: '5px' },
         position: 'relative',
         '.swiper-button-next, .swiper-button-prev': {
-          color: 'rgba(255, 255, 255, 0.6)'
-        }
+          color: 'rgba(255, 255, 255, 0.6)',
+          opacity: 0,
+          transition: theme => 'all 0.3s'
+        },
+        '&:hover .swiper-button-next, &:hover .swiper-button-prev': {
+          opacity: 1
+        },
+        '.swiper-button-disabled': {
+          display: 'none'
+        },
+        ...sx
       }}>
       <Swiper
         lazy={{

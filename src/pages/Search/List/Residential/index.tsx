@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { CardProperty } from 'components'
 import { Grid } from '@mui/material'
 
-const SearchListResidential: React.FC = () => {
+export const ResidentialSearchList: React.FC = () => {
   useEffect(() => {
     document.title = 'Busca - Residencial'
   }, [])
@@ -39,5 +39,3 @@ const SearchListResidential: React.FC = () => {
     </>
   )
 }
-
-export default SearchListResidential

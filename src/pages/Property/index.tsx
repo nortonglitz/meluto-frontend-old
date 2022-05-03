@@ -3,7 +3,7 @@ import { Box, Fade, Tabs, Tab, useMediaQuery, useTheme } from '@mui/material'
 import Gallery from './Gallery'
 import About from './About'
 
-const Property: React.FC = () => {
+export const Property: React.FC = () => {
   const theme = useTheme()
   const smDown = useMediaQuery(theme.breakpoints.down('sm'))
   const [option, setOption] = useState(0)
@@ -46,5 +46,3 @@ const Property: React.FC = () => {
     </Fade>
   )
 }
-
-export default Property

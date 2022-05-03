@@ -1,6 +1,6 @@
 {
   "name": "meluto-frontend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
@@ -21,7 +21,8 @@
     "react-scripts": "5.0.0",
     "swiper": "^8.0.3",
     "typescript": "^4.5.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "react-scripts start",
