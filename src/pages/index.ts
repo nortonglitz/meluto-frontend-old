@@ -1,8 +1,18 @@
 export { EasySearch } from './Search/EasySearch'
 export { ResidentialSearchList } from './Search/List/Residential'
 export { Property } from './Property'
-export { Register } from './Register'
+export { User } from './User'
+
+/* Login */
 export { Login } from './Login'
 export { RecoverPassword } from './Login/RecoverPassword'
-export { User } from './User'
-export { UserConf } from './User/Conf'
+
+/* Settings */
+export { SettingsProfile } from './Settings/Profile'
+export { SettingsContact } from './Settings/Contact'
+export { SettingsSessions } from './Settings/Sessions'
+
+/* Register */
+export { RegisterRegular } from './Register/Regular'
+export { Register } from './Register'
+export { RegisterProfessional } from './Register/Professional'

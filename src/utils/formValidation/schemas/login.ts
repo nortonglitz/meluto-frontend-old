@@ -6,7 +6,7 @@ export interface LoginForm {
 }
 
 const login = object({
-  userInput: string().required('Digite seu usuário ou e-mail'),
+  userInput: string().required('Digite seu usuário ou e-mail.'),
   password: string().required('Digite sua senha.')
 })
 

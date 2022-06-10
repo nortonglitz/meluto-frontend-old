@@ -1,17 +1,23 @@
 import { ValidationError } from 'yup'
 import login, { LoginForm } from './schemas/login'
-import register, { RegisterForm } from './schemas/register'
+import registerRegular, { RegisterRegularForm } from './schemas/registerRegular'
 import recoverPassword, { RecoverPasswordForm } from './schemas/recover-password'
+import registerProfessional, { RegisterProfessionalForm } from './schemas/registerProfessional'
+import editAllNames, { EditAllNamesForm } from './schemas/editAllNames'
+import editUsername, { EditUsernameForm } from './schemas/editUsername'
 
 const listSchemas = {
   login,
-  register,
-  recoverPassword
+  registerRegular,
+  recoverPassword,
+  registerProfessional,
+  editAllNames,
+  editUsername
 }
 
 export type FormName = keyof typeof listSchemas
 
-export type FormValues = LoginForm | RegisterForm | RecoverPasswordForm
+export type FormValues = LoginForm | RegisterRegularForm | RecoverPasswordForm | RegisterProfessionalForm | EditAllNamesForm | EditUsernameForm
 
 const testSchema = async (
   schema: FormName,

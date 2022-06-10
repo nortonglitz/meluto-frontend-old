@@ -3,7 +3,7 @@ import { SwipeableDrawer, List, ListItemButton, Divider, SwipeableDrawerProps, T
 import { useNavigate } from 'react-router-dom'
 import { HomeAccount } from 'mdi-material-ui'
 
-export const DrawerMainMenu: React.FC<SwipeableDrawerProps> = ({ open, onClose, onOpen }) => {
+export const MainMenuUnregistered: React.FC<SwipeableDrawerProps> = ({ open, onClose, onOpen }) => {
   const navigate = useNavigate()
 
   const handleItemClick = (e: SyntheticEvent, destination: string) => {

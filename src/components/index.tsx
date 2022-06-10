@@ -1,11 +1,14 @@
 /* Drawers */
-export { DrawerMainMenu } from './Drawers/MainMenu'
+export { MainMenuUnregistered } from './Drawers/MainMenu/Unregistered'
+export { MainMenuRegistered } from './Drawers/MainMenu/Registered'
 
 /* Selects */
 export { SelectIllustrationButton } from './Selects/Illustration'
 export { SelectTextButton } from './Selects/Text'
 export { SelectGroup } from './Selects/Group'
 export { SelectTextMenu } from './Selects/TextMenu'
+export { SelectMenu } from './Selects/Menu'
+export { SelectSimpleTextMenu } from './Selects/SimpleTextMenu'
 
 /* Sliders */
 export { SliderLabelAmount } from './Sliders/LabelAmount'
@@ -18,8 +21,11 @@ export { TopBar } from './TopBar'
 export { AccordionClean } from './Accordions/Clean'
 
 /* TextFields */
+export { TextFieldTelephone } from './TextFields/Telephone'
 export { TextFieldPrice } from './TextFields/Price'
 export { TextFieldPassword } from './TextFields/Password'
+export { TextFieldCEP } from './TextFields/CEP'
+export { TextFieldSite } from './TextFields/Site'
 
 /* Cards */
 export { CardProperty } from './Cards/Property'

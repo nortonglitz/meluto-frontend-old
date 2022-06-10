@@ -1,160 +1,95 @@
-import React, { FormEventHandler, useState, useEffect } from 'react'
-import { AccountPlus } from 'mdi-material-ui'
-import { Fade, Box, TextField, Grid, Typography, Button, Hidden } from '@mui/material'
-import { TextFieldPassword } from 'components'
-import RegisterIllustration from 'assets/illustrations/register2.svg'
-import { useFormValidation, RegisterForm } from 'utils/formValidation'
-import { capitalize } from 'utils/handleText'
-import CheckInBoxIllustration from 'assets/illustrations/register-check-inbox.svg'
+import React, { useEffect } from 'react'
+import { ButtonBase, useTheme, Typography, Divider, Box, Fade, ButtonBaseProps } from '@mui/material'
+import { AccountTie, Account } from 'mdi-material-ui'
+import { useNavigate } from 'react-router-dom'
 
-interface RegisterMainProps {
-  onSuccess: (email: string) => void
+interface TypeButtonProps extends ButtonBaseProps {
+  title?: string
+  icon?: React.ReactNode
 }
 
-export const RegisterMain: React.FC<RegisterMainProps> = ({ onSuccess }) => {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-
-  const form = { name, email, password, confirmPassword }
-  const { validateError, handleErrorMessage } = useFormValidation<RegisterForm>('register')
-
-  const handleFormSubmit: FormEventHandler = async (e) => {
-    e.preventDefault()
-    const result = await validateError(form)
-    if (result) {
-      onSuccess(email)
-    }
-  }
-
-  useEffect(() => {
-    document.title = 'Cadastrar'
-  })
-
+const TypeButton: React.FC<TypeButtonProps> = ({ title, icon, children, ...props }) => {
+  const theme = useTheme()
   return (
-    <Fade in>
-      <Box>
-        <Grid container justifyContent="center" sx={{ mt: { xs: 2, md: 6 }, p: 2 }}>
-          <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: { xs: 2, md: 4 } }}>
-            <Typography variant="h4">
-              Junte-se a nós!
-            </Typography>
-              <Typography
-                variant="h6"
-                letterSpacing="0.03em"
-                fontWeight="regular"
-                sx={{
-                  backgroundColor: theme => theme.palette.background.paper + 'C0',
-                  boxShadow: theme => theme.shadows[2],
-                  width: 'fit-content',
-                  borderRadius: '10px',
-                  p: 1,
-                  mt: 1,
-                  mx: 2
-                }}
-              >
-                  Salve seus imóveis favoritos, anuncie e tenha acesso ao cadastro profissional!
-              </Typography>
-          </Grid>
-          <Hidden mdDown>
-            <Grid item xs={12} sm={6} lg={4} xl={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 8 }}>
-              <img src={RegisterIllustration} height="200px"/>
-              <Typography variant="h4" sx={{ mt: 2 }}>Faça o seu cadastro</Typography>
-            </Grid>
-          </Hidden>
-          <Grid item xs={12} sm={6} lg={4} xl={3}>
-              <form
-                onSubmit={handleFormSubmit}
-                style={{ display: 'flex', width: '100%', justifyContent: 'center' }}
-              >
-                <Box sx={{
-                  display: 'flex',
-                  width: '100%',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  maxWidth: '350px',
-                  '& > div': {
-                    mt: 1.5
-                  },
-                  '& > button': {
-                    mt: 4
-                  }
-                }}>
-                  <TextField
-                    fullWidth
-                    label="Nome"
-                    value={name}
-                    onChange={e => setName(capitalize(e.target.value))}
-                    {...handleErrorMessage('name')}
-                    />
-                  <TextField
-                    fullWidth
-                    label="E-mail"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    {...handleErrorMessage('email')}
-                  />
-                  <TextFieldPassword
-                    fullWidth
-                    label="Senha"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    {...handleErrorMessage('password', 'A senha precisa ter no mínimo 8 caracteres. Inclua ao menos uma letra maiúscula, uma minúscula, um número e um símbolo (!@#$&*).')}
-                  />
-                  <TextFieldPassword
-                    fullWidth
-                    label="Confirme a senha"
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    {...handleErrorMessage('confirmPassword')}
-                  />
-                  <Button type="submit" variant="outlined" color="secondary" size="large" endIcon={<AccountPlus/>}>
-                    Cadastrar
-                  </Button>
-                </Box>
-              </form>
-          </Grid>
-        </Grid>
-      </Box>
-    </Fade>
-  )
-}
-
-interface RegisterSuccessProps {
-  email?: string
-}
-
-const RegisterSuccess: React.FC<RegisterSuccessProps> = ({ email }) => {
-  return (
-    <Fade in>
-      <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', mt: 10 }}>
-        <img src={CheckInBoxIllustration} width={300}/>
-        <Typography align="center" sx={{ maxWidth: '600px', mt: 2 }} variant="h6" fontWeight="regular">
-          Enviamos um link para <Typography component="span" color="primary" variant="h6" fontWeight="bold">{email}</Typography>.<br/>
-          Verifique a sua caixa de entrada para proceder com o cadastro.
-        </Typography>
-      </Box>
-    </Fade>
+    <ButtonBase
+        sx={{
+          display: 'flex',
+          m: 2,
+          width: '250px',
+          flexDirection: 'column',
+          backgroundColor: theme.palette.background.paper,
+          borderRadius: '10px',
+          border: '2px solid rgba(0, 0, 0, 0)',
+          transition: 'all 0.25s',
+          p: 1,
+          '& > div > svg': {
+            color: theme.palette.primary.main,
+            fontSize: '10em',
+            transition: 'all 0.25s'
+          },
+          '&:hover': {
+            borderColor: theme.palette.secondary.main
+          },
+          '&:hover > div > svg': {
+            color: theme.palette.primary.light
+          }
+        }} {...props}>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', height: '170px', width: '100%' }}>
+          {icon}
+          <Typography variant="h6" lineHeight={0} sx={{ mt: 1 }}>
+            {title}
+          </Typography>
+        </Box>
+        <Box sx={{ flexGrow: 1 }}>
+          <Divider/>
+          <Box
+            sx={{
+              textAlign: 'left',
+              fontSize: '1.1em',
+              letterSpacing: '0.05em',
+              fontStyle: 'italic'
+            }}>
+              {children}
+          </Box>
+        </Box>
+    </ButtonBase>
   )
 }
 
 export const Register: React.FC = () => {
-  const [filled, setFilled] = useState(false)
-  const [email, setEmail] = useState('')
-
-  const handleSuccess = (email: string) => {
-    setFilled(true)
-    setEmail(email)
-  }
-
+  const navigate = useNavigate()
+  const theme = useTheme()
+  const personBenefits = ['Salve seus imóveis favoritos', 'Anuncie seus imóveis']
+  const professionalBenefits = ['Planos exclusivos', 'Página própria', 'Salve seus imóveis favoritos', 'Anuncie seus imóveis']
+  useEffect(() => {
+    document.title = 'Cadastro - Escolha o tipo'
+  })
   return (
     <Fade in>
-      <Box>
-        {filled
-          ? <RegisterSuccess email={email}/>
-          : <RegisterMain onSuccess={handleSuccess}/>
-        }
+      <Box sx={{ mt: { xs: 5, md: 10 } }}>
+        <Typography variant="h4" align="center" sx={{ mb: 2, px: 5 }}>Escolha o cadastro</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <TypeButton title="Pessoa Física" icon={<Account/>} onClick={() => navigate('person')}>
+            <Box sx={{ mt: 2 }}>
+              {personBenefits.map((item, i) => (
+                <Box key={`person-item-${i}`}>
+                  <span style={{ marginRight: '4px', color: theme.palette.success.light }}>✔</span>
+                  {item}<br/>
+                </Box>
+              ))}
+            </Box>
+          </TypeButton>
+          <TypeButton title="Profissional" icon={<AccountTie/>} onClick={() => navigate('professional')}>
+            <Box sx={{ mt: 2 }}>
+              {professionalBenefits.map((item, i) => (
+                <Box key={`professional-item-${i}`}>
+                  <span style={{ marginRight: '4px', color: theme.palette.success.light }}>✔</span>
+                  {item}<br/>
+                </Box>
+              ))}
+            </Box>
+          </TypeButton>
+        </Box>
       </Box>
     </Fade>
   )

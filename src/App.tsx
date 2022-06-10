@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactRoutes from 'routes'
 import { CssBaseline, ThemeProvider } from '@mui/material'
+import { AuthProvider } from 'contexts/auth'
 import darkTheme from 'themes/dark'
 
 const App: React.FC = () => {
@@ -8,7 +9,9 @@ const App: React.FC = () => {
     <>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline/>
-        <ReactRoutes/>
+        <AuthProvider>
+          <ReactRoutes/>
+        </AuthProvider>
       </ThemeProvider>
     </>
   )
