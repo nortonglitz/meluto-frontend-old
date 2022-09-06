@@ -4,8 +4,6 @@ import { Menu, SignRealEstate } from 'mdi-material-ui'
 import { useNavigate } from 'react-router-dom'
 import { MainMenuUnregistered, MainMenuRegistered } from 'components'
 import { useAuth } from 'contexts/auth'
-import MelutoSmallLogo from 'assets/meluto/topbar_logo_small.svg'
-import MelutoLogo from 'assets/meluto/topbar_logo.svg'
 
 export const TopBar: React.FC = () => {
   const theme = useTheme()
@@ -15,10 +13,11 @@ export const TopBar: React.FC = () => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const { user } = useAuth()
   const navigate = useNavigate()
+  const bucket = process.env.REACT_APP_BUCKET_URL
 
   useEffect(() => {
     if (user) {
-      setMenuIcon(<img src={user.avatar} style={{ width: '36px', borderRadius: '50%' }}/>)
+      setMenuIcon(<img src={user.avatar.value} style={{ width: '36px', borderRadius: '50%' }}/>)
     } else {
       setMenuIcon(<Menu fontSize="large"/>)
     }
@@ -43,14 +42,14 @@ export const TopBar: React.FC = () => {
           }
         }}>
           <img
-            src={MelutoLogo}
+            src={`${bucket}/logos/topbar_logo.svg`}
             height="36px"
             style={{ display: smDown ? 'none' : 'flex' }}
             onClick={() => navigate('/')}
             alt="Meluto"
           />
           <img
-            src={MelutoSmallLogo}
+            src={`${bucket}/logos/topbar_logo_small.svg`}
             height="24px"
             style={{ display: smDown ? 'flex' : 'none' }}
             onClick={() => navigate('/')}

@@ -2,9 +2,8 @@ import React, { useState } from 'react'
 import { CardProperty } from 'components'
 import { Fade, Box, Typography, Button, IconButton, Divider, Tabs, Tab, BoxProps, Grid, ButtonBase, ButtonBaseProps, useMediaQuery, useTheme } from '@mui/material'
 import { CheckDecagram, MapMarker, ChevronRight, Youtube, Instagram, Facebook, Phone, Whatsapp } from 'mdi-material-ui'
-import RealEstateLogo from 'assets/imgs/logo-real-estate.png'
-import UserShowResidentialAdsIllustration from 'assets/illustrations/user-show-residential-ads.svg'
-import UserNoAdsIllustration from 'assets/illustrations/user-no-ads.svg'
+
+const bucket = process.env.REACT_APP_BUCKET_URL
 
 interface SocialMediaProps {
   type: 'instagram' | 'youtube' | 'facebook' | 'whatsapp'
@@ -179,7 +178,7 @@ const MoreAdsButton: React.FC<ButtonBaseProps> = ({ sx, ...props }) => {
     {...props}
   >
     <Box>
-      <img src={UserShowResidentialAdsIllustration} style={{ width: '100%', maxWidth: '220px' }}/>
+      <img src={`${bucket}/illustrations/user-show-residential-ads.svg`} style={{ width: '100%', maxWidth: '220px' }}/>
       <Typography variant="body1" fontWeight="medium" sx={{ mt: 1 }} color="primary">
         Veja todos os imóveis
       </Typography>
@@ -199,7 +198,7 @@ const ResidentialAds: React.FC<ResidentialAdsProps> = ({ residentialAds }) => {
       <Box>
         {!residentialAds || residentialAds.length < 1
           ? <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <img src={UserNoAdsIllustration} style={{ width: '100%', maxWidth: '300px' }}/>
+              <img src={`${bucket}/illustrations/user-no-ads.svg`} style={{ width: '100%', maxWidth: '300px' }}/>
               <Typography sx={{ mt: 2 }} color="text.secondary" align="center">
                 Ainda não há anúncios residenciais
               </Typography>
@@ -238,7 +237,7 @@ const CommercialAds: React.FC<CommercialAdsProps> = ({ commercialAds }) => {
       <Box>
         {!commercialAds || commercialAds.length < 1
           ? <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <img src={UserNoAdsIllustration} width={300}/>
+              <img src={`${bucket}/illustrations/user-no-ads.svg`} width={300}/>
               <Typography sx={{ mt: 2 }} color="text.secondary" align="center">
                 Ainda não há anúncios comerciais
               </Typography>
@@ -276,7 +275,7 @@ export const User: React.FC = () => {
       <Grid container spacing={4} justifyContent="center" sx={{ mt: 0 }}>
         <Grid item xs={12} sm={8} md={5} lg={4} xl={3}>
           <Box sx={{ position: { xs: 'flex', md: 'sticky' }, top: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}>
-            <UserLogo url={RealEstateLogo}/>
+            <UserLogo url={`${bucket}/users/avatar.png`}/>
             <Box sx={{ mt: 2, mb: 1, display: 'flex', width: '100%', justifyContent: 'space-evenly' }}>
               <SocialMedia type="instagram"/>
               <SocialMedia type="youtube"/>

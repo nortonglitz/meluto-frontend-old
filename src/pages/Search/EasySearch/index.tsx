@@ -3,9 +3,8 @@ import { showNumberMetricAffixes } from 'utils/handleNumber'
 import { useTheme, useMediaQuery, Box, Typography, SxProps, Divider, AccordionSummary, AccordionDetails, Grid, Fade, Button, TextField, IconButton } from '@mui/material'
 import { Bed, Shower, Car, ChevronDown, ArrowRight, Restore, City, HomeSearch } from 'mdi-material-ui'
 import { SelectIllustrationButton, SelectTextButton, AccordionClean, TextFieldPrice, SelectGroup, SelectTextMenu } from 'components'
-import CommercialIllustration from 'assets/illustrations/search-commercial.svg'
-import ResidentialIllustration from 'assets/illustrations/search-residential.svg'
-import SearchBackgroundImage from 'assets/imgs/easysearch-background.jpg'
+
+const bucket = process.env.REACT_APP_BUCKET_URL
 
 type Property = 'residential' | 'commercial'
 type Transaction = 'buy' | 'rent'
@@ -47,7 +46,7 @@ const SearchBox: React.FC<Form> = ({ form, setForm, sx }) => {
             selected={form.property === 'residential'}
             onClick={() => setForm({ ...form, property: 'residential' })}
           >
-            <img src={ResidentialIllustration} width={100} alt="Residencial" />
+            <img src={`${bucket}/illustrations/search-residential.svg`} width={100} alt="Residencial" />
           </SelectIllustrationButton>
           <SelectIllustrationButton
             sx={{ ml: 1, p: 1 }}
@@ -55,7 +54,7 @@ const SearchBox: React.FC<Form> = ({ form, setForm, sx }) => {
             selected={form.property === 'commercial'}
             onClick={() => setForm({ ...form, property: 'commercial' })}
           >
-            <img src={CommercialIllustration} width={100} alt="Comercial"/>
+            <img src={`${bucket}/illustrations/search-commercial.svg`} width={100} alt="Comercial"/>
           </SelectIllustrationButton>
         </Box>
         <Box sx={{ display: 'flex', mt: 2 }}>
@@ -343,7 +342,7 @@ export const EasySearch: React.FC = () => {
           zIndex: -1000,
           height: 'calc(100% - 64px)',
           width: '100%',
-          backgroundImage: `url(${SearchBackgroundImage})`,
+          backgroundImage: `url(${bucket}/backgrounds/easysearch.jpg)`,
           backgroundPosition: 'center',
           backgroundSize: 'cover',
           borderBottomLeftRadius: smDown ? '0%' : '100%'

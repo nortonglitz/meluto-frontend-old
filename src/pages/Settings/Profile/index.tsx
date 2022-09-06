@@ -2,10 +2,10 @@ import React, { useEffect, useState, FormEventHandler } from 'react'
 import {
   Fade, Box, ButtonProps, Accordion, Alert, AccordionSummary,
   AccordionDetails, Typography, Button, useTheme, LinearProgress,
-  TextField, IconButton, Grid, Dialog, DialogTitle,
-  DialogActions, DialogContent
+  TextField, IconButton, Grid, Dialog, DialogTitle, Snackbar,
+  DialogActions, DialogContent, AlertColor, CircularProgress
 } from '@mui/material'
-import { useFormValidation, EditAllNamesForm, EditUsernameForm } from 'utils/formValidation'
+import { useFormValidation, EditAllNamesForm, EditUsernameForm, EditPasswordForm, EditDescriptionForm } from 'utils/formValidation'
 import { ChevronDown, Upload, BorderNoneVariant, Lock } from 'mdi-material-ui'
 import { TextFieldPassword, TextFieldCEP } from 'components'
 import { differenceInDays } from 'date-fns'
@@ -13,6 +13,7 @@ import { UserModel } from 'types/user'
 import { useAuth } from 'contexts/auth'
 import { editUser } from 'services/users'
 import { capitalize } from 'utils/handleText'
+import { isSameDate } from 'utils/handleDate'
 
 const Empty: React.FC = () => <BorderNoneVariant color="error"/>
 
@@ -111,15 +112,17 @@ interface NameProps {
   firstName?: string
   lastName?: string
   updatedAt: Date
+  createdAt: Date
   tradingName?: string
   onSave: (values: object, field: string) => void
 }
 
-const Name: React.FC<NameProps> = ({ firstName, lastName, updatedAt, tradingName, onSave }) => {
+const Name: React.FC<NameProps> = ({ firstName, lastName, updatedAt, tradingName, createdAt, onSave }) => {
   const daysDiff = differenceInDays(new Date(), new Date(updatedAt))
   const MIN_DAYS = 60
 
-  const editable = daysDiff >= MIN_DAYS
+  const firstTime = isSameDate(new Date(updatedAt), createdAt)
+  const editable = daysDiff >= MIN_DAYS || firstTime
 
   const [localTradingOrFirstName, setLocalTradingOrFirstName] = useState('')
   const [localLastName, setLocalLastName] = useState('')
@@ -146,22 +149,26 @@ const Name: React.FC<NameProps> = ({ firstName, lastName, updatedAt, tradingName
         lastName: localLastName
       }
       onSave(values, 'name')
+      setLocalLastName('')
+      setLocalTradingOrFirstName('')
     }
+    setLocalTradingOrFirstName('')
+    setLocalLastName('')
   }
 
   return (
     <SettingsItem title="Nome" desc={tradingName || `${firstName} ${lastName}`}>
-      <LinearProgress value={daysDiff >= MIN_DAYS ? 100 : (daysDiff / MIN_DAYS) * 100} variant="determinate" color={daysDiff > MIN_DAYS ? 'success' : 'error'}/>
+      <LinearProgress value={firstTime ? 100 : daysDiff >= MIN_DAYS ? 100 : (daysDiff / MIN_DAYS) * 100} variant="determinate" color={firstTime ? 'success' : daysDiff > MIN_DAYS ? 'success' : 'error'}/>
       <Typography
         variant="body2"
         fontStyle="italic"
         sx={{
           mb: 2,
           mt: 1,
-          color: theme => daysDiff >= MIN_DAYS ? theme.palette.success.main : theme.palette.error.main
+          color: theme => firstTime ? theme.palette.success.main : daysDiff >= MIN_DAYS ? theme.palette.success.main : theme.palette.error.main
         }}
       >
-        {daysDiff >= MIN_DAYS ? 'Você pode alterar o nome.' : daysDiff > 58 ? `Falta ${MIN_DAYS - daysDiff} dia.` : `Faltam ${MIN_DAYS - daysDiff} dias.`}
+        {firstTime ? 'Você pode alterar o nome.' : daysDiff >= MIN_DAYS ? 'Você pode alterar o nome.' : daysDiff > 58 ? `Falta ${MIN_DAYS - daysDiff} dia.` : `Faltam ${MIN_DAYS - daysDiff} dias.`}
       </Typography>
       <Typography sx={{ mb: 1 }}>
         Esse é o nome que aparecerá para os usuários ao visitar o seu perfil ou em cartões nos anúncios.
@@ -202,9 +209,38 @@ const Name: React.FC<NameProps> = ({ firstName, lastName, updatedAt, tradingName
   )
 }
 
-const Password: React.FC<{updatedAt: Date}> = ({ updatedAt }) => {
+interface PasswordProps {
+  onSave: (values: object, field: string) => void
+  updatedAt: Date
+}
+
+const Password: React.FC<PasswordProps> = ({ updatedAt, onSave }) => {
   const daysDiff = differenceInDays(new Date(), updatedAt)
   const MAX_DAYS = 60
+
+  const [localPassword, setLocalPassword] = useState('')
+  const [localConfirmPassword, setLocalConfirmPassword] = useState('')
+
+  const { validateError, handleErrorMessage } = useFormValidation<EditPasswordForm>('editPassword')
+
+  const form = {
+    password: localPassword,
+    confirmPassword: localConfirmPassword
+  }
+
+  const handleFormSubmit: FormEventHandler = async (e) => {
+    e.preventDefault()
+    const isValid = await validateError(form)
+    if (!isValid) return
+    const values = {
+      newPassword: localPassword,
+      confirmNewPassword: localConfirmPassword
+    }
+    onSave(values, 'password')
+    setLocalPassword('')
+    setLocalConfirmPassword('')
+  }
+
   return (
     <SettingsItem title="Senha"
       desc={
@@ -218,43 +254,86 @@ const Password: React.FC<{updatedAt: Date}> = ({ updatedAt }) => {
       <Typography>
         Sua senha será necessária para efetuar novos logins e alterações em seu cadastro.
       </Typography>
-      <TextFieldPassword label="Nova Senha" fullWidth sx={{ mt: 1 }}/>
-      <TextFieldPassword label="Confirme a Nova Senha" fullWidth sx={{ mt: 2 }}/>
-      <Disclaimer>
-        Para a segurança de sua conta, é importante que altere sua senha a cada 60 dias.
-      </Disclaimer>
-      <SaveButton/>
+      <form>
+        <TextFieldPassword
+          value={localPassword}
+          onChange={e => setLocalPassword(e.target.value)}
+          label="Nova Senha"
+          fullWidth
+          sx={{ mt: 1 }}
+          {...handleErrorMessage('password')}
+        />
+        <TextFieldPassword
+          value={localConfirmPassword}
+          onChange={e => setLocalConfirmPassword(e.target.value)}
+          label="Confirme a Nova Senha"
+          fullWidth
+          sx={{ mt: 2 }}
+          {...handleErrorMessage('confirmPassword')}
+        />
+        <Disclaimer>
+          Para a segurança de sua conta, é importante que altere sua senha a cada 60 dias.
+        </Disclaimer>
+        <SaveButton type="submit" onClick={handleFormSubmit}/>
+      </form>
     </SettingsItem>
   )
 }
 
-const Description: React.FC<{desc?: string, available: boolean}> = ({ desc, available }) => {
-  const [value, setValue] = useState(desc || '')
+interface DescriptionProps {
+  desc?: string
+  available: boolean
+  onSave: (values: object, field: string) => void
+}
+
+const Description: React.FC<DescriptionProps> = ({ desc, available, onSave }) => {
+  const [localDesc, setLocalDesc] = useState('')
+
+  const { validateError, handleErrorMessage } = useFormValidation<EditDescriptionForm>('editDescription')
+
+  const form = { description: localDesc }
+
+  const handleFormSubmit: FormEventHandler = async (e) => {
+    e.preventDefault()
+    const isValid = await validateError(form)
+    if (!isValid) return
+    const values = {
+      description: localDesc
+    }
+    onSave(values, 'description')
+    setLocalDesc('')
+  }
+
   return (
     <SettingsItem title="Descrição" desc={ !available ? <Locked/> : desc ? 'Preenchida' : <Empty/>}>
       {!available
         ? <NotProfessional/>
         : <>
-            <Typography>
+            <Typography align="justify">
               É utilizada para que possa dar uma breve informação ao visitante de sua página sobre a empresa.
             </Typography>
-            <TextField
-              sx={{ mt: 1 }}
-              label="Descrição"
-              fullWidth multiline
-              inputProps={{ maxLength: 150 }}
-              rows={3}
-              onChange={e => setValue(e.target.value)}
-            />
-            <Disclaimer>
-              {value.length === 150
-                ? 'Limite máximo atingido.'
-                : value.length === 149
-                  ? 'É possível digitar 1 caracter.'
-                  : `É possível digitar ${150 - value.length} caracteres.`
+            <form>
+              <TextField
+                sx={{ mt: 1 }}
+                label="Descrição"
+                fullWidth
+                multiline
+                inputProps={{ maxLength: 150 }}
+                rows={3}
+                value={localDesc}
+                onChange={e => setLocalDesc(e.target.value)}
+                {...handleErrorMessage('description')}
+              />
+              <Disclaimer>
+                {localDesc.length === 150
+                  ? 'Limite máximo atingido.'
+                  : localDesc.length === 149
+                    ? 'É possível digitar 1 caracter.'
+                    : `É possível digitar ${150 - localDesc.length} caracteres.`
                 }
-            </Disclaimer>
-            <SaveButton/>
+              </Disclaimer>
+              <SaveButton type="submit" onClick={handleFormSubmit}/>
+            </form>
           </>
       }
     </SettingsItem>
@@ -264,15 +343,17 @@ const Description: React.FC<{desc?: string, available: boolean}> = ({ desc, avai
 interface UsernameProps {
   username: string
   updatedAt: Date
+  createdAt: Date
   available: boolean
   onSave: (values: object, field: string) => void
 }
 
-const Username: React.FC<UsernameProps> = ({ username, updatedAt, available, onSave }) => {
+const Username: React.FC<UsernameProps> = ({ username, updatedAt, available, createdAt, onSave }) => {
   const daysDiff = differenceInDays(new Date(), updatedAt)
   const MIN_DAYS = 60
+  const firstTime = isSameDate(new Date(updatedAt), createdAt)
 
-  const editable = daysDiff >= MIN_DAYS
+  const editable = daysDiff >= MIN_DAYS || firstTime
 
   const [localUsername, setLocalUsername] = useState('')
   const { validateError, handleErrorMessage } = useFormValidation<EditUsernameForm>('editUsername')
@@ -289,6 +370,7 @@ const Username: React.FC<UsernameProps> = ({ username, updatedAt, available, onS
       username: localUsername
     }
     onSave(values, 'username')
+    setLocalUsername('')
   }
 
   return (
@@ -302,33 +384,36 @@ const Username: React.FC<UsernameProps> = ({ username, updatedAt, available, onS
       {!available
         ? <NotProfessional/>
         : <>
-            <Typography sx={{ mb: 1 }}>
-              O nome de usuário é utilizado como endereço do seu perfil. Opte por um que seja de fácil compreensão e identificação.
-            </Typography>
-            <LinearProgress value={daysDiff >= MIN_DAYS ? 100 : (daysDiff / MIN_DAYS) * 100} variant="determinate" color={daysDiff > MIN_DAYS ? 'success' : 'error'}/>
+            <LinearProgress value={firstTime ? 100 : daysDiff >= MIN_DAYS ? 100 : (daysDiff / MIN_DAYS) * 100} variant="determinate" color={firstTime ? 'success' : daysDiff > MIN_DAYS ? 'success' : 'error'}/>
             <Typography
               variant="body2"
               fontStyle="italic"
               sx={{
                 mb: 2,
                 mt: 1,
-                color: theme => daysDiff >= MIN_DAYS ? theme.palette.success.main : theme.palette.error.main
+                color: theme => firstTime ? theme.palette.success.main : daysDiff >= MIN_DAYS ? theme.palette.success.main : theme.palette.error.main
               }}
             >
-              {daysDiff >= MIN_DAYS ? 'Você pode alterar seu usuário.' : daysDiff > 58 ? `Falta ${MIN_DAYS - daysDiff} dia.` : `Faltam ${MIN_DAYS - daysDiff} dias.`}
+              {firstTime ? 'Você pode alterar seu usuário.' : daysDiff >= MIN_DAYS ? 'Você pode alterar seu usuário.' : daysDiff > 58 ? `Falta ${MIN_DAYS - daysDiff} dia.` : `Faltam ${MIN_DAYS - daysDiff} dias.`}
             </Typography>
-            <TextField
-              label="Novo Nome de Usuário"
-              onChange={e => setLocalUsername(e.target.value)}
-              value={localUsername}
-              fullWidth
-              {...handleErrorMessage('username')}
-            />
-            <Disclaimer>
-              A troca poderá ser efetuada {MIN_DAYS} dias após mudança.<br/>
-              Não utilize pontuações ou caracteres especiais.
-            </Disclaimer>
-            <SaveButton type="submit" onClick={handleFormSubmit}/>
+            <Typography sx={{ mb: 1 }}>
+              O nome de usuário é utilizado como endereço do seu perfil. Opte por um que seja de fácil compreensão e identificação.
+            </Typography>
+            <form>
+              <TextField
+                disabled={!editable}
+                label="Novo Nome de Usuário"
+                onChange={e => setLocalUsername(e.target.value.toLowerCase())}
+                value={localUsername}
+                fullWidth
+                {...handleErrorMessage('username')}
+              />
+              <Disclaimer>
+                A troca poderá ser efetuada {MIN_DAYS} dias após mudança.<br/>
+                Não utilize pontuações ou caracteres especiais.
+              </Disclaimer>
+              <SaveButton disabled={!editable} type="submit" onClick={handleFormSubmit}/>
+            </form>
           </>
       }
     </SettingsItem>
@@ -406,9 +491,14 @@ interface ConfirmDialogProps {
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, field, values, user, setModal }) => {
   const [title, setTitle] = useState('')
+  const [loading, setLoading] = useState(false)
   const [newValue, setNewValue] = useState('')
   const [oldValue, setOldValue] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [openSnackbar, setOpenSnackbar] = useState(false)
+  const [alertSeverity, setAlertSeverity] = useState<AlertColor>('error')
+  const [alertPopUpMsg, setAlertPopUpMsg] = useState('')
   const { updateUser } = useAuth()
 
   useEffect(() => {
@@ -422,46 +512,158 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, field, values, user
         setTitle('nome')
         setNewValue(values.tradingName)
         setOldValue(user.names.trading)
+        break
+      case 'username':
+        setTitle('nome de usuário')
+        setNewValue(values.username)
+        setOldValue(user.username.value)
+        break
+      case 'password':
+        setTitle('Senha')
+        setNewValue('Nova')
+        setOldValue('Antiga')
+        break
+      case 'description':
+        setTitle('Descrição')
+        setNewValue(values.description || 'Em branco')
+        setOldValue(user.description || 'Em branco')
+        break
     }
   }, [field, values])
 
-  const handleConfirm = async () => {
-    console.log(user)
+  const handleCancel = () => {
+    setPassword('')
+    setModal(false)
+  }
+
+  const handleConfirm: FormEventHandler = async (e) => {
+    e.preventDefault()
+    if (!password) {
+      setPasswordError('Digite sua senha.')
+      return
+    }
+    setPasswordError('')
+    setLoading(true)
     const { user: updatedUser, error } = await editUser(user._id, field, {
       ...values,
       password
     })
+    setLoading(false)
+    if (error === 'AuthenticationError') {
+      setPasswordError('Senha inválida.')
+      return
+    } else if (error === 'ConnectionError') {
+      setAlertSeverity('error')
+      setAlertPopUpMsg('Erro de conexão com servidor.')
+      setOpenSnackbar(true)
+    } else if (error === 'InternalError') {
+      setAlertSeverity('error')
+      setAlertPopUpMsg('Erro interno.')
+      setOpenSnackbar(true)
+    } else if (error) {
+      setAlertSeverity('error')
+      setAlertPopUpMsg('Alteração não é possível.')
+      setOpenSnackbar(true)
+    }
     if (updatedUser) {
       updateUser(updatedUser)
+      setAlertSeverity('success')
+      setAlertPopUpMsg('Alteração concluída.')
+      setOpenSnackbar(true)
     }
     setPassword('')
     setModal(false)
   }
 
+  const onCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setOpenSnackbar(false)
+  }
+
   return (
-    <Dialog open={open}>
-      <DialogTitle sx={{ textAlign: 'center' }}>Confirmar alteração?</DialogTitle>
-      <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', border: '1px dashed rgba(255, 255, 255, 0.2)', borderRadius: '5px' }}>
-          <Typography variant="overline" color="text.secondary">{title}</Typography>
-          <Typography lineHeight={0.2} sx={{ fontSize: '1.2em', mb: 2, textDecoration: 'line-through' }}>{oldValue}</Typography>
-          <Typography lineHeight={0.2} sx={{ fontSize: '1.2em', mb: 2, color: theme => theme.palette.primary.main }}>{newValue}</Typography>
-          {field === 'name' &&
-          <>
-            <Typography variant="overline" color="text.secondary">Sobrenome</Typography>
-            <Typography lineHeight={0.2} sx={{ fontSize: '1.2em', mb: 2, textDecoration: 'line-through' }}>{user.names.last}</Typography>
-            <Typography lineHeight={0.2} sx={{ fontSize: '1.2em', mb: 2, color: theme => theme.palette.primary.main }}>{values.lastName}</Typography>
-          </>
-          }
-        </Box>
-        <Typography color="text.secondary" sx={{ mt: 2, mb: 1 }}>Para prosseguir digite sua senha atual.</Typography>
-        <TextFieldPassword sx={{ mb: 2 }} value={password} onChange={e => setPassword(e.target.value)} label="Senha" fullWidth/>
-        <DialogActions sx={{ justifyContent: 'space-around' }}>
-          <Button color="inherit" onClick={() => setModal(false)}>Cancelar</Button>
-          <Button color="primary" onClick={handleConfirm}>Confirmar</Button>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={onCloseSnackbar}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+      >
+        <Alert severity={alertSeverity}>
+          {alertPopUpMsg}
+        </Alert>
+      </Snackbar>
+      <Dialog open={open}>
+        <DialogTitle sx={{ textAlign: 'center' }}>Confirmar alteração?</DialogTitle>
+        <DialogContent>
+          <form>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', border: '1px dashed rgba(255, 255, 255, 0.2)', borderRadius: '5px' }}>
+              <Typography variant="overline" color="text.secondary">{title}</Typography>
+              <Typography align="center"
+                sx={{
+                  fontSize: '1.2em',
+                  textDecoration: 'line-through',
+                  maxWidth: '200px',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden'
+                }}
+              >
+                {oldValue}
+              </Typography>
+              <Typography align="center"
+                sx={{
+                  fontSize: '1.2em',
+                  mb: 1,
+                  color: theme => theme.palette.primary.main,
+                  maxWidth: '200px',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden'
+                }}
+                >
+                  {newValue}
+              </Typography>
+              {field === 'name' &&
+              <>
+                <Typography variant="overline" color="text.secondary">Sobrenome</Typography>
+                <Typography sx={{ fontSize: '1.2em', textDecoration: 'line-through' }}>{user.names.last}</Typography>
+                <Typography sx={{ fontSize: '1.2em', mb: 1, color: theme => theme.palette.primary.main }}>{values.lastName}</Typography>
+              </>
+              }
+            </Box>
+            <Typography color="text.secondary" sx={{ mt: 2, mb: 1 }}>Para prosseguir digite sua senha atual.</Typography>
+            <TextFieldPassword
+              autoFocus
+              error={!!passwordError}
+              helperText={passwordError}
+              sx={{ mb: 2 }}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              label="Senha"
+              fullWidth
+            />
+            <DialogActions sx={{ justifyContent: 'space-around' }}>
+              <Button color="inherit" disabled={loading} onClick={handleCancel}>Cancelar</Button>
+              <Button
+                color="primary"
+                disabled={loading}
+                type="submit"
+                onClick={handleConfirm}
+                endIcon={loading && <CircularProgress size={20}/>}
+              >
+                Confirmar
+              </Button>
+            </DialogActions>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -471,7 +673,6 @@ export const SettingsProfile: React.FC = () => {
   const [values, setValues] = useState({})
   const [field, setField] = useState('')
   const available = user.role === 'professional' && user.verified.value
-  const professionalNotVerified = user.role === 'professional' && !user.verified.value
 
   const handleSaveClick = (values: object, field: string) => {
     setOpenDialog(true)
@@ -488,13 +689,10 @@ export const SettingsProfile: React.FC = () => {
       <Fade in>
         <Box>
           <ConfirmDialog open={openDialog} field={field} values={values} user={user} setModal={setOpenDialog}/>
-          <Alert severity="warning" sx={{ display: professionalNotVerified ? 'flex' : 'none', justifyContent: 'center' }}>
-            Sua conta está sendo verificada e em breve você poderá usar os recursos profissionais.
-          </Alert>
           <Grid container justifyContent="center" sx={{ mt: 4 }}>
             <Grid item xs={12} sm={8} md={6} lg={4} xl={3} sx={{ display: 'flex', justifyContent: 'center' }}>
               <Box>
-                <UploadAvatar url={user.avatar}/>
+                <UploadAvatar url={user.avatar.value}/>
               </Box>
             </Grid>
             <Grid item xs={12} sm={8} md={6} lg={4} xl={3}>
@@ -502,15 +700,21 @@ export const SettingsProfile: React.FC = () => {
                 firstName={user.names.first}
                 lastName={user.names.last}
                 updatedAt={new Date(user.names.updatedAt)}
+                createdAt={new Date(user.createdAt)}
                 tradingName={user.names.trading}
                 onSave={(values, field) => handleSaveClick(values, field)}
               />
               <Username
                 username={user.username.value}
-                lastUpdate={new Date(user.username.updatedAt)}
+                updatedAt={new Date(user.username.updatedAt)}
+                createdAt={new Date(user.createdAt)}
                 available={available}
+                onSave={(values, field) => handleSaveClick(values, field)}
               />
-              <Password updatedAt={new Date(user.password.updatedAt)}/>
+              <Password
+                updatedAt={new Date(user.password.updatedAt)}
+                onSave={(values, field) => handleSaveClick(values, field)}
+              />
               <Address
                 address={user.address}
                 available={available}
@@ -518,6 +722,7 @@ export const SettingsProfile: React.FC = () => {
               <Description
                 desc={user.description}
                 available={available}
+                onSave={(values, field) => handleSaveClick(values, field)}
               />
             </Grid>
           </Grid>

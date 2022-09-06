@@ -2,6 +2,9 @@
 export { MainMenuUnregistered } from './Drawers/MainMenu/Unregistered'
 export { MainMenuRegistered } from './Drawers/MainMenu/Registered'
 
+/* Buttons */
+export { ButtonFileUpload } from './Buttons/FileUpload'
+
 /* Selects */
 export { SelectIllustrationButton } from './Selects/Illustration'
 export { SelectTextButton } from './Selects/Text'

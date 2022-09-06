@@ -3,8 +3,6 @@ import api from 'services/api'
 import { UserModel } from 'types/user'
 import { isEmail } from 'utils/formValidation/checkers'
 
-export { RequireAuth, AvoidUser } from './pages'
-
 interface AuthContextProps {
   user: UserModel
   refreshUser: () => void
@@ -55,7 +53,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       setUser(res.data.user)
     } catch (err: any) {
       if (err.response.data) {
-        return { type: err.response.data.error }
+        return { type: err.response.data.error, email: err.response.data.email }
       } else if (!err.request.data) {
         return { type: 'ConnectionError' }
       } else {

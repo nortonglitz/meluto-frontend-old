@@ -50,7 +50,7 @@ export const MainMenuRegistered: React.FC<MainMenuRegisteredProps> = ({ open, on
       <SwipeableDrawer open={open} anchor="right" onClose={onClose} onOpen={onOpen}>
         <List sx={{ width: '250px' }}>
           <ListItem button sx={{ mb: 1, justifyContent: 'center' }} onClick={e => handleItemClick(e, `/${user.username.value}`)}>
-            <img src={user.avatar} style={{ width: '36px', borderRadius: '50%' }}/>
+            <img src={user.avatar.value} style={{ width: '36px', borderRadius: '50%' }}/>
             <Box sx={{ display: 'flex', flexDirection: 'column', ml: 2 }}>
               <Typography variant="h6" lineHeight={1} sx={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.1em' }}>
                 {user.names.first}

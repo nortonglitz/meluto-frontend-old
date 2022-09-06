@@ -144,7 +144,7 @@ const SocialMedia: React.FC<SocialMediaProps> = ({ instagram, facebook, youtube,
 const Whatsapp: React.FC<{whatsapp?: string}> = ({ whatsapp }) => {
   return (
     <SettingsItem title="Whatsapp" desc={whatsapp ? formatPhone(whatsapp) : <Empty/>}>
-      <Typography sx={{ mb: 2 }}>
+      <Typography sx={{ mb: 2 }} align="justify">
         O Whatsapp é o meio de comunicação mais utilizado. Verifique se o número inserido o possui.
       </Typography>
       <TextFieldTelephone fullWidth label="Novo Whatsapp"/>
@@ -159,7 +159,7 @@ const Whatsapp: React.FC<{whatsapp?: string}> = ({ whatsapp }) => {
 const MainPhone: React.FC<{mainPhone?: string}> = ({ mainPhone }) => {
   return (
     <SettingsItem title="Telefone de Contato" desc={mainPhone ? formatPhone(mainPhone) : <Empty/>}>
-      <Typography sx={{ mb: 2 }}>
+      <Typography sx={{ mb: 2 }} align="justify">
         Esse número será fornecido a interessados que desejam realizar uma ligação. É importante que seja de maior disponibilidade.
       </Typography>
       <TextFieldTelephone fullWidth label="Novo Telefone"/>
@@ -194,12 +194,12 @@ const Site: React.FC<{url?: string, available: boolean}> = ({ url, available }) 
 const Email: React.FC<{email: string}> = ({ email }) => {
   return (
     <SettingsItem title="E-mail" desc={email}>
-      <Typography sx={{ mb: 1 }}>
+      <Typography sx={{ mb: 1 }} align="justify">
         Utilize um e-mail ao qual você tenha acesso. Com ele é possível recuperar sua senha em caso de perda.
       </Typography>
       <TextField label="Novo E-mail" fullWidth/>
       <Disclaimer>
-        Verifique a caixa de entrada do e-mail antigo e após clicar no link enviado será gerado um outro para o novo.
+        Será preciso verificar o novo e-mail através de um código enviado. Verifique sua caixa de entrada ou spam.
       </Disclaimer>
       <SaveButton/>
     </SettingsItem>
@@ -210,27 +210,21 @@ export const SettingsContact: React.FC = () => {
   const { user } = useAuth()
 
   const available = user.role === 'professional' && user.verified.value
-  const professionalNotVerified = user.role === 'professional' && !user.verified.value
 
   useEffect(() => {
     document.title = 'Configurações - Contato'
   }, [])
   return (
     <Fade in>
-      <Box>
-        <Alert severity="warning" sx={{ display: professionalNotVerified ? 'flex' : 'none', justifyContent: 'center' }}>
-          Sua conta está sendo verificada e em breve você poderá usar os recursos profissionais.
-        </Alert>
-        <Grid container justifyContent="center" sx={{ mt: 4 }}>
-          <Grid item xs={12} sm={8} md={6} lg={4} xl={3}>
-            <Email email={user.email.value}/>
-            <MainPhone mainPhone={user.telephone}/>
-            <Whatsapp whatsapp={user.whatsapp}/>
-            <SocialMedia available={available} />
-            <Site available={available} url={user.site}/>
-          </Grid>
+      <Grid container justifyContent="center" sx={{ mt: 4 }}>
+        <Grid item xs={12} sm={8} md={6} lg={4} xl={3}>
+          <Email email={user.email.value}/>
+          <MainPhone mainPhone={user.telephone}/>
+          <Whatsapp whatsapp={user.whatsapp ? user.whatsapp.value : undefined}/>
+          <SocialMedia available={available} />
+          <Site available={available} url={user.site}/>
         </Grid>
-      </Box>
+      </Grid>
     </Fade>
   )
 }

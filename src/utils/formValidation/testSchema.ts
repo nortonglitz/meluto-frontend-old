@@ -5,6 +5,9 @@ import recoverPassword, { RecoverPasswordForm } from './schemas/recover-password
 import registerProfessional, { RegisterProfessionalForm } from './schemas/registerProfessional'
 import editAllNames, { EditAllNamesForm } from './schemas/editAllNames'
 import editUsername, { EditUsernameForm } from './schemas/editUsername'
+import editPassword, { EditPasswordForm } from './schemas/editPassword'
+import editDescription, { EditDescriptionForm } from './schemas/editDescription'
+import registerTemporaryRegular1, { RegisterTemporaryRegular1Form } from './schemas/registerTemporaryRegular1'
 
 const listSchemas = {
   login,
@@ -12,12 +15,17 @@ const listSchemas = {
   recoverPassword,
   registerProfessional,
   editAllNames,
-  editUsername
+  editUsername,
+  editPassword,
+  editDescription,
+  registerTemporaryRegular1
 }
 
 export type FormName = keyof typeof listSchemas
 
-export type FormValues = LoginForm | RegisterRegularForm | RecoverPasswordForm | RegisterProfessionalForm | EditAllNamesForm | EditUsernameForm
+export type FormValues = EditPasswordForm | LoginForm | RegisterRegularForm
+| RecoverPasswordForm | RegisterProfessionalForm | EditAllNamesForm | EditUsernameForm |
+EditDescriptionForm | RegisterTemporaryRegular1Form
 
 const testSchema = async (
   schema: FormName,

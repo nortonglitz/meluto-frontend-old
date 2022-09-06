@@ -12,7 +12,10 @@ export interface UserModel {
     verified: boolean
     updatedAt: Date
   }
-  avatar: string
+  avatar: {
+    value: string
+    updatedAt: Date
+  }
   names: {
     first: string
     last: string
@@ -25,11 +28,16 @@ export interface UserModel {
     youtube: string
     facebook: string
   }
+  taxInfo: 'company' | 'individual'
   site: string
   description: string
   telephone: string
   businessActivity: 'real estate'
-  whatsapp: string
+  whatsapp: {
+    value: string
+    verified: boolean
+    updatedAt: Date
+  },
   role: 'admin' | 'professional' | 'regular'
   birthdate: Date
   subrole: string

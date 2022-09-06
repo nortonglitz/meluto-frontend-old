@@ -1,5 +1,6 @@
 export const capitalize = (text: string) => {
-  return text.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))
+  const textArray = text.split(' ').map(sentence => sentence.charAt(0).toUpperCase() + sentence.substring(1).toLocaleLowerCase())
+  return textArray.join(' ')
 }
 
 export const formatPhone = (number: string) => {
