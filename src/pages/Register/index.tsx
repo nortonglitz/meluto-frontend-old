@@ -3,6 +3,7 @@ import { TemporaryUserProvider } from 'contexts/temporaryUser'
 import { Snackbar, Alert, AlertColor } from '@mui/material'
 import { Hub } from './Hub'
 import { Email } from './Email'
+import { Name } from './Name'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export interface AlertProps {
@@ -18,7 +19,7 @@ export const Register: React.FC = () => {
   useEffect(() => {
     document.title = 'Cadastre-se'
 
-    if (step !== 'email') {
+    if (step !== 'email' && step !== 'name') {
       navigate('/register=hub')
     }
   }, [])
@@ -42,6 +43,7 @@ export const Register: React.FC = () => {
       </Snackbar>
       {step === 'hub' && <Hub/>}
       {step === 'email' && <Email setAlertMsg={setAlertMsg}/>}
+      {step === 'name' && <Name setAlertMsg={setAlertMsg}/>}
     </TemporaryUserProvider>
   )
 }

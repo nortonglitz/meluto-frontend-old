@@ -1,4 +1,4 @@
-import React, { useState, FormEventHandler } from 'react'
+import React, { useState, FormEventHandler, useEffect } from 'react'
 import { Box, Fade, Paper, Typography, TextField, Button, CircularProgress } from '@mui/material'
 import { useFormValidation, RegisterEmailForm } from 'utils/formValidation'
 import { sendEmailCode } from 'services/verifiers/sendEmailCode'
@@ -16,6 +16,10 @@ export const SendEmail: React.FC<SendEmailProps> = ({ setAlertMsg }) => {
   const [loading, setLoading] = useState(false)
   const { validateError, handleErrorMessage } = useFormValidation<RegisterEmailForm>('registerEmail')
   const { temporaryUser, setTemporaryUser } = useTemporaryUser()
+
+  useEffect(() => {
+    document.title = 'Cadastro - Enviar código'
+  })
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()

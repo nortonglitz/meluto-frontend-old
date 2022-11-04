@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { Box, Fade, Typography, Paper, Button, Divider } from '@mui/material'
 import { useTemporaryUser } from 'contexts/temporaryUser'
 import { At, BadgeAccount, Cellphone, Lock, Check } from 'mdi-material-ui'
@@ -46,6 +46,10 @@ const Item: React.FC<ItemProps> = ({ title, icon, desc, show, done, link }) => {
 export const Hub: React.FC = () => {
   const { temporaryUser } = useTemporaryUser()
 
+  useEffect(() => {
+    document.title = 'Registro - Hub'
+  })
+
   return (
     <Fade in>
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -64,7 +68,7 @@ export const Hub: React.FC = () => {
         <Item
           icon={<BadgeAccount/>}
           title="Nome"
-          desc="Como prefere ser chamado."
+          desc="Como vamos nos referir a você."
           show={temporaryUser.email.verified && !temporaryUser.name}
           done={!!temporaryUser.name}
           link="name"

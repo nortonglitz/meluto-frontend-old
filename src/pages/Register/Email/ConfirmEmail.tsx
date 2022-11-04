@@ -1,4 +1,4 @@
-import React, { useState, FormEventHandler } from 'react'
+import React, { useState, FormEventHandler, useEffect } from 'react'
 import { TextField, TextFieldProps, Fade, Box, Paper, Typography, Button, CircularProgress } from '@mui/material'
 import { Check } from 'mdi-material-ui'
 import { AlertProps } from '../'
@@ -36,6 +36,10 @@ export const ConfirmEmail: React.FC<ConfirmEmailProps> = ({ setAlertMsg }) => {
   const { temporaryUser, setTemporaryUser } = useTemporaryUser()
   const [errorType, setErrorType] = useState('')
 
+  useEffect(() => {
+    document.title = 'Cadastro - Confirmar código'
+  })
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -49,7 +53,7 @@ export const ConfirmEmail: React.FC<ConfirmEmailProps> = ({ setAlertMsg }) => {
       setAlertMsg({
         open: true,
         severity: 'error',
-        text: 'Erro interno.'
+        text: 'Erro interno'
       })
       return
     }

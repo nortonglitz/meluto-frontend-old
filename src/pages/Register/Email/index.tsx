@@ -15,10 +15,6 @@ export const Email: React.FC<EmailProps> = ({ setAlertMsg }) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    document.title = 'Cadastro - E-mail'
-  }, [])
-
-  useEffect(() => {
     if (temporaryUser.email.verified) {
       navigate('/register=hub')
     }
