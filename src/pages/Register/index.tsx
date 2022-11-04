@@ -1,74 +1,47 @@
 import React, { useEffect, useState } from 'react'
-import { Fade, Box, Snackbar, Alert, Grid, AlertColor } from '@mui/material'
-import Role from './Role'
-import Email from './Email'
-import { useTemporaryUser } from 'contexts/temporaryUser'
+import { TemporaryUserProvider } from 'contexts/temporaryUser'
+import { Snackbar, Alert, AlertColor } from '@mui/material'
+import { Hub } from './Hub'
+import { Email } from './Email'
+import { useNavigate, useParams } from 'react-router-dom'
 
-export interface StepProps {
-  setAlertMsg: (msg: string) => void
-  setOpenSnackbar: (open: boolean) => void
-  setAlertSeverity: (severity: AlertColor) => void
+export interface AlertProps {
+  severity?: AlertColor
+  text?: string
+  open?: boolean
 }
 
 export const Register: React.FC = () => {
-  const [openSnackbar, setOpenSnackbar] = useState(false)
-  const [alertSeverity, setAlertSeverity] = useState<AlertColor>('warning')
-  const [alertMsg, setAlertMsg] = useState('')
-  const { temporaryUser } = useTemporaryUser()
-  const [step, setStep] = useState('role')
-
-  const onCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpenSnackbar(false)
-  }
-
+  const { step } = useParams()
+  const [alertMsg, setAlertMsg] = useState<AlertProps>({ severity: undefined, text: undefined })
+  const navigate = useNavigate()
   useEffect(() => {
-    document.title = 'Cadastro'
+    document.title = 'Cadastre-se'
+
+    if (step !== 'email') {
+      navigate('/register=hub')
+    }
   }, [])
 
-  useEffect(() => {
-    if (!temporaryUser) {
-      setStep('role')
-      return
-    }
-    if (!temporaryUser.email) {
-      setStep('email')
-      return
-    }
-    setStep('hub')
-  }, [temporaryUser])
+  const handleCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return
+    setAlertMsg({ ...alertMsg, open: false })
+  }
 
   return (
-    <Fade in>
-      <Box>
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={2000}
-          onClose={onCloseSnackbar}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center'
-          }}
-        >
-          <Alert severity={alertSeverity}>
-            {alertMsg}
-          </Alert>
-        </Snackbar>
-        <Grid container justifyContent="center" sx={{ mt: { xs: 2, md: 6 }, p: 2, mb: { xs: 2, md: 4 } }}>
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            {step === 'role' && <Role/>}
-            {step === 'email' &&
-              <Email
-                setAlertMsg={setAlertMsg}
-                setOpenSnackbar={setOpenSnackbar}
-                setAlertSeverity={setAlertSeverity}
-              />
-            }
-          </Grid>
-        </Grid>
-      </Box>
-    </Fade>
+    <TemporaryUserProvider>
+      <Snackbar
+        open={alertMsg.open}
+        autoHideDuration={2000}
+        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={alertMsg.severity || 'error'} sx={{ width: '100%' }}>
+          {alertMsg.text}
+        </Alert>
+      </Snackbar>
+      {step === 'hub' && <Hub/>}
+      {step === 'email' && <Email setAlertMsg={setAlertMsg}/>}
+    </TemporaryUserProvider>
   )
 }

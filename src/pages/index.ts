@@ -13,9 +13,9 @@ export { SettingsProfile } from './Settings/Profile'
 export { SettingsContact } from './Settings/Contact'
 export { SettingsSessions } from './Settings/Sessions'
 
-/* Register */
-export { Register } from './Register'
-
 /* Verify */
 export { VerifyEmail } from './Verify/Email'
 export { VerifyProfessional } from './Verify/Professional'
+
+/* Register */
+export { Register } from './Register'

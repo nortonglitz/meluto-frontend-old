@@ -1,15 +1,25 @@
 import React, { useState, createContext, useContext } from 'react'
 import { TemporaryUserModel } from 'types/temporaryUser'
 
-interface AuthContextProps {
+interface TemporaryUserContextProps {
   temporaryUser: TemporaryUserModel
   setTemporaryUser: (temporaryUser: TemporaryUserModel) => void
 }
 
-const TemporaryUserContext = createContext<AuthContextProps>(null!)
+const TemporaryUserContext = createContext<TemporaryUserContextProps>(null!)
 
 export const TemporaryUserProvider: React.FC = ({ children }) => {
-  const [temporaryUser, setTemporaryUser] = useState<TemporaryUserModel>(undefined!)
+  const [temporaryUser, setTemporaryUser] = useState<TemporaryUserModel>({
+    email: {
+      value: undefined,
+      verified: false
+    },
+    name: undefined,
+    phone: {
+      value: undefined,
+      verified: false
+    }
+  })
 
   return (
     <TemporaryUserContext.Provider value={{ temporaryUser, setTemporaryUser }}>

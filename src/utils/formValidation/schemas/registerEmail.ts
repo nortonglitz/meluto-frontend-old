@@ -1,11 +1,11 @@
 import { object, string } from 'yup'
 
-export interface RegisterTemporaryRegular1Form {
+export interface RegisterEmailForm {
   email: string
 }
 
-const registerTemporaryRegular1 = object({
+const registerEmail = object({
   email: string().email('E-mail inválido.').required('Digite seu e-mail.')
 })
 
-export default registerTemporaryRegular1
+export default registerEmail

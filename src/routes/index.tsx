@@ -1,13 +1,12 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import {
-  EasySearch, ResidentialSearchList, Property, Register, Login, RecoverPassword,
+  EasySearch, ResidentialSearchList, Property, Login, RecoverPassword,
   User, SettingsProfile, SettingsContact, SettingsSessions, VerifyEmail, Settings,
-  VerifyProfessional
+  VerifyProfessional, Register
 } from 'pages'
 import { RequireAuth, AvoidUser, Public } from 'middlewares'
 import { TopBar } from 'components'
-import { TemporaryUserProvider } from 'contexts/temporaryUser'
 
 const ReactRoutes: React.FC = () => {
   return (
@@ -16,7 +15,9 @@ const ReactRoutes: React.FC = () => {
       <Routes>
         <Route path="/" element={<Public><EasySearch/></Public>}/>
         <Route path="/login" element={<AvoidUser><Login/></AvoidUser>}/>
-        <Route path="/register" element={<AvoidUser><TemporaryUserProvider><Register/></TemporaryUserProvider></AvoidUser>}/>
+        <Route path="/register" element={<Navigate to="/register=hub"/>}/>
+        <Route path="/register=" element={<Navigate to="/register=hub"/>}/>
+        <Route path="/register=:step" element={<AvoidUser><Register/></AvoidUser>}/>
         <Route path="/recover-password" element={<AvoidUser><RecoverPassword/></AvoidUser>}/>
         <Route path="/residential/search" element={<Public><ResidentialSearchList/></Public>}/>
         <Route path="/residential/:id" element={<Public><Property/></Public>}/>

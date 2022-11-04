@@ -58,6 +58,7 @@ export const cnpjField = string().length(14, 'CNPJ inválido.').test(
     return true
   }
 )
+export const verifyCodeField = string().matches(/^[\d]{6}$/, 'Código inválido.')
 export const creciNumberField = string().matches(/^[\d]{6}$/, 'CRECI inválido.')
 export const firstNameField = string()
   .min(3, 'Tamanho mínimo de 3 caracteres.')
