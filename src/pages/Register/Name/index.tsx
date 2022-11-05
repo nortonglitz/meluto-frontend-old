@@ -3,6 +3,7 @@ import { Fade, Box, Paper, Typography, Button, CircularProgress, TextField } fro
 import { useNavigate } from 'react-router-dom'
 import { useFormValidation, EditNameForm } from 'utils/formValidation'
 import { useTemporaryUser } from 'contexts/temporaryUser'
+import { capitalize } from 'utils/handleText'
 import { AlertProps } from '../'
 
 interface NameProps {
@@ -19,7 +20,7 @@ export const Name: React.FC<NameProps> = ({ setAlertMsg }) => {
   useEffect(() => {
     document.title = 'Registro - Nome'
 
-    if (temporaryUser.email.verified !== true) {
+    if (temporaryUser.email.verified !== true || temporaryUser.name) {
       navigate('/register=hub')
     }
   })
@@ -39,7 +40,7 @@ export const Name: React.FC<NameProps> = ({ setAlertMsg }) => {
     })
     setTemporaryUser({
       ...temporaryUser,
-      name
+      name: capitalize(name)
     })
     navigate('/register=hub')
   }

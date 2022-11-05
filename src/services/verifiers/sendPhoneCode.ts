@@ -1,13 +1,10 @@
 import api from 'services/api'
 
-type EmailCodeParams = {
-  email: string
-  code: string
-}
-
-export const validateEmailCode = async (params: EmailCodeParams) => {
+export const sendPhoneCode = async (phone: string) => {
   try {
-    await api.put('/verifiers/email', params)
+    await api.post('/verifiers/phone', {
+      phone
+    })
     return { error: null }
   } catch (err: any) {
     if (err.response.data) {

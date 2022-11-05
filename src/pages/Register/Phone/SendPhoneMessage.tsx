@@ -1,42 +1,42 @@
 import React, { useState, FormEventHandler, useEffect } from 'react'
-import { Box, Fade, Paper, Typography, TextField, Button, CircularProgress } from '@mui/material'
-import { useFormValidation, RegisterEmailForm } from 'utils/formValidation'
-import { sendEmailCode } from 'services/verifiers/sendEmailCode'
+import { Box, Fade, Paper, Typography, Button, CircularProgress } from '@mui/material'
+import { TextFieldPhone } from 'components'
+import { useFormValidation, EditPhoneForm } from 'utils/formValidation'
+import { sendPhoneCode } from 'services/verifiers/sendPhoneCode'
 import { useTemporaryUser } from 'contexts/temporaryUser'
-
 import { AlertProps } from '../'
 
-interface SendEmailProps {
+interface SendPhoneMessageProps {
   setAlertMsg: (props: AlertProps) => void
 }
 
-export const SendEmail: React.FC<SendEmailProps> = ({ setAlertMsg }) => {
-  const [email, setEmail] = useState('')
+export const SendPhoneMessage: React.FC<SendPhoneMessageProps> = ({ setAlertMsg }) => {
+  const [phone, setPhone] = useState('')
   const [errorType, setErrorType] = useState('')
   const [loading, setLoading] = useState(false)
-  const { validateError, handleErrorMessage } = useFormValidation<RegisterEmailForm>('registerEmail')
+  const { validateError, handleErrorMessage } = useFormValidation<EditPhoneForm>('editPhone')
   const { temporaryUser, setTemporaryUser } = useTemporaryUser()
 
   useEffect(() => {
-    document.title = 'Cadastro - Enviar código no e-mail'
+    document.title = 'Cadastro - Enviar código no celular'
   })
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const isValid = await validateError({ email })
+    const isValid = await validateError({ phone })
     if (!isValid) {
       setLoading(false)
       return
     }
-    const { error } = await sendEmailCode(email)
+    const { error } = await sendPhoneCode(phone)
     setLoading(false)
     if (!error) {
       setErrorType('')
       setTemporaryUser({
         ...temporaryUser,
-        email: {
-          value: email
+        phone: {
+          value: phone
         }
       })
     } else if (error === 'ConnectionError') {
@@ -60,25 +60,25 @@ export const SendEmail: React.FC<SendEmailProps> = ({ setAlertMsg }) => {
     <Fade in>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Paper sx={{ p: 3, borderRadius: '10px', mt: { xs: 2, lg: 5 } }}>
-          <Typography variant="h5" fontWeight={500}>E-mail</Typography>
-          <Typography sx={{ mb: 3 }}>Iremos enviar um código de confirmação.</Typography>
+          <Typography variant="h5" fontWeight={500}>Telefone</Typography>
+          <Typography sx={{ mb: 3, maxWidth: '35ch' }}>Iremos enviar um código de confirmação. Não esqueça de incluir seu DDD.</Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <TextField
+                <TextFieldPhone
                   disabled={loading}
                   sx={{ mb: 3, minWidth: '280px' }}
                   autoFocus
-                  onChange={e => setEmail(e.target.value)}
-                  label="Digite o seu e-mail"
+                  onPhoneChange={phone => setPhone(phone)}
+                  label="Digite o seu telefone"
                   error={errorType === 'ValidationError' || errorType === 'DuplicateEmailError'}
-                  {...handleErrorMessage('email',
+                  {...handleErrorMessage('phone',
                     errorType === 'ValidationError'
-                      ? 'E-mail inválido.'
-                      : errorType === 'DuplicateEmailError' ? 'E-mail já em uso.' : undefined)
+                      ? 'Telefone inválido.'
+                      : errorType === 'DuplicateEmailError' ? 'Telefone já em uso.' : undefined)
                   }
                 />
                 <Button
-                  disabled={!email || loading}
+                  disabled={!phone || loading}
                   variant="outlined"
                   endIcon={loading && <CircularProgress size={20}/>}
                   type="submit"

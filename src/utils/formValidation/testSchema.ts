@@ -8,6 +8,7 @@ import editDescription, { EditDescriptionForm } from './schemas/editDescription'
 import registerEmail, { RegisterEmailForm } from './schemas/registerEmail'
 import verifyCode, { VerifyCodeForm } from './schemas/verifyCode'
 import editName, { EditNameForm } from './schemas/editName'
+import editPhone, { EditPhoneForm } from './schemas/editPhone'
 
 const listSchemas = {
   login,
@@ -18,14 +19,16 @@ const listSchemas = {
   editDescription,
   registerEmail,
   editName,
-  verifyCode
+  verifyCode,
+  editPhone
 }
 
 export type FormName = keyof typeof listSchemas
 
 export type FormValues = EditPasswordForm | LoginForm
 | RecoverPasswordForm | EditAllNamesForm | EditUsernameForm |
-EditDescriptionForm | RegisterEmailForm | VerifyCodeForm | EditNameForm
+EditDescriptionForm | RegisterEmailForm | VerifyCodeForm | EditNameForm |
+EditPhoneForm
 
 const testSchema = async (
   schema: FormName,

@@ -3,6 +3,7 @@ import { Box, Fade, Typography, Paper, Button, Divider } from '@mui/material'
 import { useTemporaryUser } from 'contexts/temporaryUser'
 import { At, BadgeAccount, Cellphone, Lock, Check } from 'mdi-material-ui'
 import { useNavigate } from 'react-router-dom'
+import { formatPhone } from 'utils/handleText'
 
 interface ItemProps {
   title: string
@@ -58,7 +59,7 @@ export const Hub: React.FC = () => {
         <Typography sx={{ mb: 5 }}>Iremos validar seus dados para ter certeza de que é você.</Typography>
         <Item
           icon={<At/>}
-          title="E-mail"
+          title={temporaryUser.email.value || 'E-mail'}
           desc="Para ser possível recuperar a sua conta."
           show={!temporaryUser.email.verified}
           done={temporaryUser.email.verified}
@@ -67,7 +68,7 @@ export const Hub: React.FC = () => {
         <Divider/>
         <Item
           icon={<BadgeAccount/>}
-          title="Nome"
+          title={temporaryUser.name || 'Nome'}
           desc="Como vamos nos referir a você."
           show={temporaryUser.email.verified && !temporaryUser.name}
           done={!!temporaryUser.name}
@@ -76,7 +77,7 @@ export const Hub: React.FC = () => {
         <Divider/>
         <Item
           icon={<Cellphone/>}
-          title="Telefone"
+          title={temporaryUser.phone.value ? formatPhone(temporaryUser.phone.value) : 'Telefone'}
           desc="Para verificarmos se é você ao logar."
           show={temporaryUser.email.verified && !!temporaryUser.name && !temporaryUser.phone.verified}
           done={temporaryUser.phone.verified}

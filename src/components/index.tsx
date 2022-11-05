@@ -29,6 +29,7 @@ export { TextFieldPrice } from './TextFields/Price'
 export { TextFieldPassword } from './TextFields/Password'
 export { TextFieldCEP } from './TextFields/CEP'
 export { TextFieldSite } from './TextFields/Site'
+export { TextFieldPhone } from './TextFields/Phone'
 
 /* Cards */
 export { CardProperty } from './Cards/Property'
