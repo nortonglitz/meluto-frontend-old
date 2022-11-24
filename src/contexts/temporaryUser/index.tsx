@@ -18,7 +18,8 @@ export const TemporaryUserProvider: React.FC = ({ children }) => {
     phone: {
       value: undefined,
       verified: false
-    }
+    },
+    password: false
   })
 
   return (

@@ -4,7 +4,7 @@ import { Check } from 'mdi-material-ui'
 import { AlertProps } from '../'
 import { useFormValidation, VerifyCodeForm } from 'utils/formValidation'
 import { useTemporaryUser } from 'contexts/temporaryUser'
-import { validatePhoneCode } from 'services/verifiers/validatePhoneCode'
+import { validatePhoneCode } from 'services/verifiers'
 
 const CodeTextField: React.FC<TextFieldProps> = ({ sx, ...props }) => {
   return (

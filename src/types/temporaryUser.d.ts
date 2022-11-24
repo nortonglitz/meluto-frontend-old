@@ -7,5 +7,6 @@ export interface TemporaryUserModel {
   phone: {
     value?: string
     verified?: boolean
-  }
+  },
+  password: boolean
 }

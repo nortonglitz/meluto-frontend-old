@@ -46,9 +46,14 @@ const Item: React.FC<ItemProps> = ({ title, icon, desc, show, done, link }) => {
 
 export const Hub: React.FC = () => {
   const { temporaryUser } = useTemporaryUser()
+  const navigate = useNavigate()
 
   useEffect(() => {
     document.title = 'Registro - Hub'
+
+    if (temporaryUser.email.verified && !!temporaryUser.name && temporaryUser.phone.verified && temporaryUser.password) {
+      navigate('/register=success')
+    }
   })
 
   return (
@@ -87,7 +92,8 @@ export const Hub: React.FC = () => {
         <Item
           title="Senha"
           desc="Será necessária para acessar sua conta."
-          show={temporaryUser.email.verified && !!temporaryUser.name && temporaryUser.phone.verified}
+          show={temporaryUser.email.verified && !!temporaryUser.name && temporaryUser.phone.verified && !temporaryUser.password}
+          done={temporaryUser.password}
           icon={<Lock/>}
           link="password"
         />

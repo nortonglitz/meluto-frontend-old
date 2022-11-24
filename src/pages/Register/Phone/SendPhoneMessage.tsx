@@ -2,7 +2,7 @@ import React, { useState, FormEventHandler, useEffect } from 'react'
 import { Box, Fade, Paper, Typography, Button, CircularProgress } from '@mui/material'
 import { TextFieldPhone } from 'components'
 import { useFormValidation, EditPhoneForm } from 'utils/formValidation'
-import { sendPhoneCode } from 'services/verifiers/sendPhoneCode'
+import { sendPhoneCode } from 'services/verifiers'
 import { useTemporaryUser } from 'contexts/temporaryUser'
 import { AlertProps } from '../'
 

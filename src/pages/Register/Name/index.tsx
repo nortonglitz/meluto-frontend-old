@@ -20,7 +20,7 @@ export const Name: React.FC<NameProps> = ({ setAlertMsg }) => {
   useEffect(() => {
     document.title = 'Registro - Nome'
 
-    if (temporaryUser.email.verified !== true || temporaryUser.name) {
+    if (!temporaryUser.email.verified || !!temporaryUser.name) {
       navigate('/register=hub')
     }
   })

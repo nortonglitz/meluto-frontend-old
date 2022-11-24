@@ -15,7 +15,7 @@ export const Phone: React.FC<PhoneProps> = ({ setAlertMsg }) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (temporaryUser.phone.verified) {
+    if (!temporaryUser.email.verified || !temporaryUser.name || temporaryUser.phone.verified) {
       navigate('/register=hub')
     }
 

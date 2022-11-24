@@ -1,7 +1,7 @@
 import React, { useState, FormEventHandler, useEffect } from 'react'
 import { Box, Fade, Paper, Typography, TextField, Button, CircularProgress } from '@mui/material'
 import { useFormValidation, RegisterEmailForm } from 'utils/formValidation'
-import { sendEmailCode } from 'services/verifiers/sendEmailCode'
+import { sendEmailCode } from 'services/verifiers'
 import { useTemporaryUser } from 'contexts/temporaryUser'
 
 import { AlertProps } from '../'

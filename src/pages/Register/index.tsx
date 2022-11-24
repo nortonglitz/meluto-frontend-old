@@ -5,6 +5,8 @@ import { Hub } from './Hub'
 import { Email } from './Email'
 import { Name } from './Name'
 import { Phone } from './Phone'
+import { Password } from './Password'
+import { Success } from './Success'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export interface AlertProps {
@@ -20,7 +22,7 @@ export const Register: React.FC = () => {
   useEffect(() => {
     document.title = 'Cadastre-se'
 
-    if (step !== 'email' && step !== 'name' && step !== 'phone') {
+    if (step !== 'email' && step !== 'name' && step !== 'phone' && step !== 'password' && step !== 'success') {
       navigate('/register=hub')
     }
   }, [])
@@ -46,6 +48,8 @@ export const Register: React.FC = () => {
       {step === 'email' && <Email setAlertMsg={setAlertMsg}/>}
       {step === 'name' && <Name setAlertMsg={setAlertMsg}/>}
       {step === 'phone' && <Phone setAlertMsg={setAlertMsg}/>}
+      {step === 'password' && <Password setAlertMsg={setAlertMsg}/>}
+      {step === 'success' && <Success setAlertMsg={setAlertMsg}/>}
     </TemporaryUserProvider>
   )
 }
